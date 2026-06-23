@@ -1,0 +1,173 @@
+/* ===== 智慧社区商城 — SaaS 设计系统 ===== */
+:root {
+  /* 色板 */
+  --text: #64748b;
+  --text-h: #0f172a;
+  --bg: #fff;
+  --bg-secondary: #f8fafc;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --accent-bg: rgba(99, 102, 241, 0.08);
+  --accent-border: rgba(99, 102, 241, 0.35);
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --price-color: #ef4444;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  /* 字体 */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --heading: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+
+  font: 15px/1.6 var(--sans);
+  letter-spacing: 0.1px;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #94a3b8;
+    --text-h: #f1f5f9;
+    --bg: #0f172a;
+    --bg-secondary: #1e293b;
+    --border: #334155;
+    --border-light: #1e293b;
+    --accent: #818cf8;
+    --accent-light: #a5b4fc;
+    --accent-bg: rgba(129, 140, 248, 0.12);
+    --accent-border: rgba(129, 140, 248, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 10px 24px rgba(0,0,0,0.5);
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  letter-spacing: -0.3px;
+}
+
+h1 { font-size: 2rem; margin: 0 0 16px; }
+h2 { font-size: 1.5rem; margin: 0 0 12px; }
+h3 { font-size: 1.15rem; margin: 0 0 8px; }
+
+p { margin: 0; color: var(--text); }
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+/* ===== 商品网格 ===== */
+.goods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+/* ===== 商品卡片 ===== */
+.goods-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.goods-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+}
+
+.goods-img {
+  width: 100%;
+  height: 220px;
+}
+
+.img-placeholder {
+  width: 100%;
+  height: 220px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.goods-info {
+  padding: 14px;
+}
+
+.goods-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-h);
+}
+
+.goods-price {
+  color: var(--price-color);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ===== 分页 ===== */
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 28px 0;
+}
+
+/* ===== 空态 ===== */
+.page-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text);
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
