@@ -3,29 +3,56 @@ package com.smartcommunity.admin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smartcommunity.admin.common.Result;
+import com.smartcommunity.admin.dto.AdminGoodsView;
+import com.smartcommunity.admin.entity.Category;
 import com.smartcommunity.admin.entity.Goods;
+import com.smartcommunity.admin.mapper.CategoryMapper;
 import com.smartcommunity.admin.mapper.GoodsMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/goods")
 @RequiredArgsConstructor
 public class GoodsController {
     private final GoodsMapper goodsMapper;
+    private final CategoryMapper categoryMapper;
 
     @GetMapping("/page")
-    public Result<?> page(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+    public Result<Page<AdminGoodsView>> page(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
         int safePage = Math.max(page, 1);
         int safeSize = Math.max(1, Math.min(size, 100));
         // 新增商品应立即出现在第一页，方便管理员确认图片和商品信息。
         LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<Goods>()
             .orderByDesc(Goods::getId);
-        Page<Goods> p = goodsMapper.selectPage(new Page<>(safePage, safeSize), wrapper);
-        return Result.ok(p);
+        Page<Goods> sourcePage = goodsMapper.selectPage(new Page<>(safePage, safeSize), wrapper);
+        Set<Integer> categoryIds = sourcePage.getRecords().stream().map(Goods::getCategoryId)
+            .filter(Objects::nonNull).collect(Collectors.toSet());
+        Map<Integer, Category> categoryMap = categoryIds.isEmpty() ? Collections.emptyMap()
+            : categoryMapper.selectList(new LambdaQueryWrapper<Category>().in(Category::getId, categoryIds))
+                .stream().collect(Collectors.toMap(Category::getId, Function.identity(), (a, b) -> a));
+
+        Page<AdminGoodsView> result = new Page<>(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
+        result.setRecords(sourcePage.getRecords().stream().map(goods -> {
+            AdminGoodsView view = new AdminGoodsView();
+            BeanUtils.copyProperties(goods, view);
+            Category category = categoryMap.get(goods.getCategoryId());
+            view.setCategoryName(category == null ? "未分类" : category.getCategoryName());
+            return view;
+        }).toList());
+        return Result.ok(result);
     }
 
     @PostMapping
@@ -39,6 +66,9 @@ public class GoodsController {
         }
         if (g.getGoodsState() == null) {
             g.setGoodsState(1);
+        }
+        if (g.getCategoryId() == null || categoryMapper.selectById(g.getCategoryId()) == null) {
+            throw new RuntimeException("请选择有效的商品类别");
         }
 
         LambdaQueryWrapper<Goods> duplicateWrapper = new LambdaQueryWrapper<Goods>()

@@ -23,7 +23,11 @@
         </el-table-column>
         <el-table-column prop="goodsNo" label="商品编号" min-width="120" />
         <el-table-column prop="goodsName" label="商品名称" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="categoryId" label="类别ID" min-width="80" />
+        <el-table-column prop="categoryName" label="商品类别" min-width="130">
+          <template #default="{ row }">
+            <span class="category-name">{{ row.categoryName || '未分类' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="goodsMarketPrice" label="市场价" min-width="90" />
         <el-table-column prop="goodsState" label="状态" min-width="80">
           <template #default="{ row }">
@@ -57,7 +61,16 @@
       <el-form :model="form">
         <el-form-item label="名称"><el-input v-model="form.goodsName" /></el-form-item>
         <el-form-item label="编号"><el-input v-model="form.goodsNo" /></el-form-item>
-        <el-form-item label="类别ID"><el-input-number v-model="form.categoryId" /></el-form-item>
+        <el-form-item label="商品类别">
+          <el-select v-model="form.categoryId" filterable placeholder="请选择中文类别" class="category-select">
+            <el-option
+              v-for="category in categories"
+              :key="category.id"
+              :label="categoryLabel(category)"
+              :value="category.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="简介"><el-input v-model="form.goodsIntroduce" type="textarea" rows="2" /></el-form-item>
         <el-form-item label="市场价"><el-input-number v-model="form.goodsMarketPrice" :precision="2" /></el-form-item>
         <el-form-item label="商品主图">
@@ -95,11 +108,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getGoodsPage, saveGoods, deleteGoods, uploadGoodsImage } from '@/api'
+import { getCategoryList, getGoodsPage, saveGoods, deleteGoods, uploadGoodsImage } from '@/api'
 import { ElMessage } from 'element-plus'
 import { Delete, Plus } from '@element-plus/icons-vue'
 
 const list = ref([])
+const categories = ref([])
 const visible = ref(false)
 const form = ref({})
 const uploading = ref(false)
@@ -108,7 +122,14 @@ const page = ref(1)
 const size = ref(10)
 const total = ref(0)
 
-onMounted(loadData)
+onMounted(async () => {
+  await Promise.all([loadCategories(), loadData()])
+})
+
+async function loadCategories() {
+  const response = await getCategoryList()
+  categories.value = response?.data || []
+}
 async function loadData() {
   loading.value = true
   try {
@@ -168,6 +189,11 @@ async function del(id) {
   if (list.value.length === 1 && page.value > 1) page.value--
   loadData()
 }
+
+function categoryLabel(category) {
+  const parent = categories.value.find(item => item.id === category.parentId)
+  return parent ? `${parent.categoryName} / ${category.categoryName}` : category.categoryName
+}
 </script>
 
 <style scoped>
@@ -181,6 +207,15 @@ async function del(id) {
 .image-empty {
   color: var(--text);
   font-size: 12px;
+}
+
+.category-name {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.category-select {
+  width: 100%;
 }
 
 .goods-thumb :deep(.el-image__error) {

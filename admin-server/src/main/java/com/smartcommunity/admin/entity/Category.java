@@ -5,7 +5,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("category")
+// 商品和居民端都关联 goods_category，后台必须使用同一张表。
+@TableName("goods_category")
 public class Category {
     @TableId(type = IdType.AUTO)
     private Integer id;
