@@ -21,3 +21,5 @@ Thumbs.db
 # Env files
 .env.local
 .env.*.local
+
+./comefromteacher
