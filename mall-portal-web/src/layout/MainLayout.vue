@@ -17,13 +17,14 @@
               <rect x="12" y="14" width="4" height="8" rx="1" fill="currentColor" opacity="0.9"/>
             </svg>
           </div>
-          <span class="logo-text">智慧社区商城</span>
+          <span class="logo-text">智慧社区生活</span>
         </div>
 
         <!-- 导航链接（桌面端） -->
         <nav class="nav-links" :class="{ 'nav-open': mobileMenuOpen }">
           <router-link to="/" @click="mobileMenuOpen = false">首页</router-link>
           <router-link to="/goods" @click="mobileMenuOpen = false">商品</router-link>
+          <router-link to="/community" @click="mobileMenuOpen = false">社区服务</router-link>
           <router-link to="/cart" @click="mobileMenuOpen = false">
             购物车
           </router-link>
@@ -65,6 +66,9 @@
                   <el-dropdown-item @click="$router.push('/cart')">
                     <el-icon><ShoppingCart /></el-icon>购物车
                   </el-dropdown-item>
+                  <el-dropdown-item @click="$router.push('/community')">
+                    <el-icon><OfficeBuilding /></el-icon>社区服务
+                  </el-dropdown-item>
                   <el-dropdown-item divided @click="logout">
                     <el-icon><SwitchButton /></el-icon>退出登录
                   </el-dropdown-item>
@@ -85,12 +89,13 @@
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <span class="footer-logo-text">智慧社区商城</span>
-          <span class="footer-tagline">SmartCommunity Mall</span>
+          <span class="footer-logo-text">智慧社区生活</span>
+          <span class="footer-tagline">SmartCommunity Portal</span>
         </div>
         <div class="footer-links">
           <span>首页</span>
           <span>商品列表</span>
+          <span>社区服务</span>
           <span>购物车</span>
           <span>我的订单</span>
         </div>
@@ -105,7 +110,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, ShoppingCart, SwitchButton } from '@element-plus/icons-vue'
+import { Document, OfficeBuilding, ShoppingCart, SwitchButton } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const searchKeyword = ref('')
@@ -124,6 +129,8 @@ function onSearch() {
 function logout() {
   localStorage.removeItem('token')
   localStorage.removeItem('phone')
+  localStorage.removeItem('userId')
+  localStorage.removeItem('userName')
   window.location.reload()
 }
 </script>

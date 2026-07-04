@@ -1,15 +1,16 @@
-/* ===== 智慧社区商城 — SaaS 设计系统 ===== */
+/* ===== 智慧社区生活 — SaaS 设计系统 ===== */
 :root {
   /* 色板 */
   --text: #64748b;
   --text-h: #0f172a;
-  --bg: #fff;
-  --bg-secondary: #f8fafc;
+  --bg: #ffffff;
+  --bg-secondary: #f6f8fb;
+  --surface: #ffffff;
   --border: #e2e8f0;
   --border-light: #f1f5f9;
 
-  --accent: #6366f1;
-  --accent-light: #818cf8;
+  --accent: #2563eb;
+  --accent-light: #38bdf8;
   --accent-bg: rgba(99, 102, 241, 0.08);
   --accent-border: rgba(99, 102, 241, 0.35);
 
@@ -20,8 +21,8 @@
 
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
   --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 10px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 8px 20px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg: 0 18px 36px rgba(15,23,42,0.10), 0 4px 8px rgba(15,23,42,0.05);
 
   --radius-sm: 6px;
   --radius: 8px;
@@ -51,7 +52,8 @@
     --text: #94a3b8;
     --text-h: #f1f5f9;
     --bg: #0f172a;
-    --bg-secondary: #1e293b;
+    --bg-secondary: #111827;
+    --surface: #172033;
     --border: #334155;
     --border-light: #1e293b;
     --accent: #818cf8;
@@ -67,7 +69,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg-secondary);
 }
 
 h1, h2, h3, h4 {
@@ -104,9 +106,9 @@ p { margin: 0; color: var(--text); }
 
 /* ===== 商品卡片 ===== */
 .goods-card {
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.25s;
@@ -120,12 +122,15 @@ p { margin: 0; color: var(--text); }
 
 .goods-img {
   width: 100%;
-  height: 220px;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  background: var(--bg-secondary);
 }
 
 .img-placeholder {
   width: 100%;
-  height: 220px;
+  aspect-ratio: 4 / 3;
+  height: 100%;
   background: var(--bg-secondary);
   display: flex;
   align-items: center;
@@ -135,7 +140,7 @@ p { margin: 0; color: var(--text); }
 }
 
 .goods-info {
-  padding: 14px;
+  padding: 14px 14px 16px;
 }
 
 .goods-name {
@@ -167,7 +172,12 @@ p { margin: 0; color: var(--text); }
   padding: 60px 20px;
   text-align: center;
   color: var(--text);
-  background: var(--bg);
-  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
+}
+
+.el-table {
+  --el-table-header-bg-color: var(--bg-secondary);
+  --el-table-tr-bg-color: var(--surface);
 }

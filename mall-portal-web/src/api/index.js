@@ -79,3 +79,44 @@ export function getSpecialList() {
 export function getSpecialGoods(specialId) {
   return request.get(`/special/${specialId}/goods`)
 }
+
+// ========== 社区服务 ==========
+export function getCommunityNotices(params) {
+  return request.get('/community/notice/page', { params })
+}
+
+export function getCommunityComplaints(params) {
+  return request.get('/community/complaint/page', { params })
+}
+
+export function createCommunityComplaint(data) {
+  return request.post('/community/complaint', data)
+}
+
+export function getCommunityVisitors(params) {
+  return request.get('/community/visitor/page', { params })
+}
+
+export function createCommunityVisitor(data) {
+  return request.post('/community/visitor', data)
+}
+
+export function getCommunityCharges(params) {
+  return request.get('/community/charge/page', { params })
+}
+
+export function getCommunityChargeDetails(chargeNo) {
+  return request.get(`/community/charge/${chargeNo}/details`)
+}
+
+export function payCommunityCharge(chargeNo) {
+  return request.put(`/community/charge/${chargeNo}/pay`)
+}
+
+export function getCommunityParkings(params) {
+  return request.get('/community/parking/page', { params })
+}
+
+export function getCommunityParkingBinds(parkingId) {
+  return request.get(`/community/parking/${parkingId}/binds`)
+}

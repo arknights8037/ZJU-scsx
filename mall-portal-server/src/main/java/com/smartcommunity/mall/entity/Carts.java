@@ -25,4 +25,13 @@ public class Carts {
 
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
+
+    @TableField(exist = false)
+    private Goods goods;
+
+    @TableField(exist = false)
+    private Store store;
+
+    @TableField(exist = false)
+    private GoodsStore goodsStore;
 }

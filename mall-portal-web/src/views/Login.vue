@@ -11,17 +11,17 @@
             <circle cx="24" cy="28" r="2" fill="#fff" />
           </svg>
         </div>
-        <h1>智慧社区商城</h1>
-        <p class="brand-desc">便捷的社区生活服务平台<br/>足不出户，乐享生活</p>
+        <h1>智慧社区生活</h1>
+        <p class="brand-desc">社区服务与便捷购物一站办理<br/>足不出户，乐享生活</p>
         <div class="brand-features">
           <div class="feature-item">
             <span class="feature-dot"></span>社区优选商品
           </div>
           <div class="feature-item">
-            <span class="feature-dot"></span>便捷在线购物
+            <span class="feature-dot"></span>物业服务办理
           </div>
           <div class="feature-item">
-            <span class="feature-dot"></span>快速配送到家
+            <span class="feature-dot"></span>便捷在线购物
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
       <div class="login-form-wrap">
         <div class="form-header">
           <h2>{{ activeTab === 'login' ? '欢迎回来' : '创建账号' }}</h2>
-          <p>{{ activeTab === 'login' ? '登录您的账号继续购物' : '注册新账号开始购物' }}</p>
+          <p>{{ activeTab === 'login' ? '登录您的账号继续使用社区服务' : '注册新账号开始使用' }}</p>
         </div>
 
         <!-- Tab 切换 -->
@@ -121,7 +121,9 @@ async function doLogin() {
   try {
     const res = await login(loginForm.value.phone, loginForm.value.password)
     localStorage.setItem('token', res.data.token)
-    localStorage.setItem('phone', loginForm.value.phone)
+    localStorage.setItem('phone', res.data.phone || loginForm.value.phone)
+    localStorage.setItem('userId', res.data.userId)
+    localStorage.setItem('userName', res.data.userName || '')
     router.push('/')
   } catch (e) {
     /* handled by interceptor */

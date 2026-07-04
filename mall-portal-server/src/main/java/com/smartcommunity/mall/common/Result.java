@@ -1,5 +1,6 @@
 package com.smartcommunity.mall.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -36,5 +37,18 @@ public class Result<T> {
 
     public static <T> Result<T> unauthorized(String message) {
         return new Result<>(401, message, null);
+    }
+
+    /**
+     * 兼容老师示例工程中的 code/msg/data 响应字段。
+     */
+    @JsonProperty("msg")
+    public String getMsg() {
+        return message;
+    }
+
+    @JsonProperty("msg")
+    public void setMsg(String msg) {
+        this.message = msg;
     }
 }

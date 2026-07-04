@@ -6,6 +6,7 @@ import com.smartcommunity.mall.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,9 +20,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public Result<Map<String, String>> login(@RequestBody Map<String, String> params) {
-        String token = userService.login(params.get("phone"), params.get("password"));
-        return Result.ok(Map.of("token", token));
+    public Result<Map<String, Object>> login(@RequestBody Map<String, String> params) {
+        String phone = params.get("phone");
+        String token = userService.login(phone, params.get("password"));
+        User user = userService.getByPhone(phone);
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("userId", user.getId());
+        data.put("phone", user.getPhone());
+        data.put("userName", user.getUserName());
+        return Result.ok(data);
     }
 
     @PostMapping("/register")

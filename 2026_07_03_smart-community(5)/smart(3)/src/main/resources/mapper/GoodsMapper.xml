@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjxy.smart.mapper.GoodsMapper">
+  <resultMap id="BaseResultMap" type="com.zjxy.smart.model.Goods">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="goods_no" jdbcType="VARCHAR" property="goodsNo" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="goods_introduce" jdbcType="VARCHAR" property="goodsIntroduce" />
+    <result column="goods_content" jdbcType="VARCHAR" property="goodsContent" />
+    <result column="goods_state" jdbcType="INTEGER" property="goodsState" />
+    <result column="goods_picture" jdbcType="VARCHAR" property="goodsPicture" />
+    <result column="goods_market_price" jdbcType="DECIMAL" property="goodsMarketPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, goods_no, goods_name, category_id, goods_introduce, goods_content, goods_state, 
+    goods_picture, goods_market_price, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zjxy.smart.model.Goods">
+    insert into goods (id, goods_no, goods_name, 
+      category_id, goods_introduce, goods_content, 
+      goods_state, goods_picture, goods_market_price, 
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{goodsNo,jdbcType=VARCHAR}, #{goodsName,jdbcType=VARCHAR}, 
+      #{categoryId,jdbcType=INTEGER}, #{goodsIntroduce,jdbcType=VARCHAR}, #{goodsContent,jdbcType=VARCHAR}, 
+      #{goodsState,jdbcType=INTEGER}, #{goodsPicture,jdbcType=VARCHAR}, #{goodsMarketPrice,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zjxy.smart.model.Goods">
+    insert into goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="goodsNo != null">
+        goods_no,
+      </if>
+      <if test="goodsName != null">
+        goods_name,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="goodsIntroduce != null">
+        goods_introduce,
+      </if>
+      <if test="goodsContent != null">
+        goods_content,
+      </if>
+      <if test="goodsState != null">
+        goods_state,
+      </if>
+      <if test="goodsPicture != null">
+        goods_picture,
+      </if>
+      <if test="goodsMarketPrice != null">
+        goods_market_price,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goodsNo != null">
+        #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null">
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsIntroduce != null">
+        #{goodsIntroduce,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsContent != null">
+        #{goodsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsState != null">
+        #{goodsState,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPicture != null">
+        #{goodsPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsMarketPrice != null">
+        #{goodsMarketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zjxy.smart.model.Goods">
+    update goods
+    <set>
+      <if test="goodsNo != null">
+        goods_no = #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null">
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsIntroduce != null">
+        goods_introduce = #{goodsIntroduce,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsContent != null">
+        goods_content = #{goodsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsState != null">
+        goods_state = #{goodsState,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPicture != null">
+        goods_picture = #{goodsPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsMarketPrice != null">
+        goods_market_price = #{goodsMarketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zjxy.smart.model.Goods">
+    update goods
+    set goods_no = #{goodsNo,jdbcType=VARCHAR},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      goods_introduce = #{goodsIntroduce,jdbcType=VARCHAR},
+      goods_content = #{goodsContent,jdbcType=VARCHAR},
+      goods_state = #{goodsState,jdbcType=INTEGER},
+      goods_picture = #{goodsPicture,jdbcType=VARCHAR},
+      goods_market_price = #{goodsMarketPrice,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selAll" parameterType="com.zjxy.smart.model.Goods" resultMap="BaseResultMap">
+    select id, goods_no, goods_name, category_id, goods_introduce, goods_content, goods_state,
+    goods_picture, goods_market_price, create_time, update_time from goods
+    <where>
+      <if test="goodsName != null and goodsName !=''">
+        goods_name like concat('%',#{goodsName},'%')
+      </if>
+      <if test="goodsContent != null and goodsContent !=''">
+        and goods_content=#{goodsContent}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>
