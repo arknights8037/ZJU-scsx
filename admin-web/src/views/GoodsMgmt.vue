@@ -5,10 +5,19 @@
       <el-button type="primary" @click="openEdit({})">新增商品</el-button>
     </div>
     <div class="table-wrap">
-      <el-table :data="list" stripe>
+      <el-table v-loading="loading" :data="list" stripe>
         <el-table-column label="主图" width="82">
           <template #default="{ row }">
-            <el-image v-if="row.goodsPicture" :src="row.goodsPicture" fit="cover" class="goods-thumb" />
+            <el-image
+              v-if="row.goodsPicture"
+              :src="row.goodsPicture"
+              :preview-src-list="[row.goodsPicture]"
+              preview-teleported
+              fit="cover"
+              class="goods-thumb"
+            >
+              <template #error><span class="image-empty">失效</span></template>
+            </el-image>
             <span v-else class="image-empty">无图</span>
           </template>
         </el-table-column>
@@ -28,6 +37,20 @@
           </template>
         </el-table-column>
       </el-table>
+    </div>
+
+    <div v-if="total" class="pagination-wrap">
+      <el-pagination
+        v-model:current-page="page"
+        v-model:page-size="size"
+        background
+        layout="total, sizes, prev, pager, next"
+        :page-sizes="[10, 20, 50]"
+        :pager-count="5"
+        :total="total"
+        @current-change="loadData"
+        @size-change="onSizeChange"
+      />
     </div>
 
     <el-dialog v-model="visible" title="商品" :close-on-click-modal="false" width="620px">
@@ -80,11 +103,26 @@ const list = ref([])
 const visible = ref(false)
 const form = ref({})
 const uploading = ref(false)
+const loading = ref(false)
+const page = ref(1)
+const size = ref(10)
+const total = ref(0)
 
 onMounted(loadData)
 async function loadData() {
-  const r = await getGoodsPage({ page: 1, size: 50 })
-  list.value = r?.data?.records || []
+  loading.value = true
+  try {
+    const r = await getGoodsPage({ page: page.value, size: size.value })
+    list.value = r?.data?.records || []
+    total.value = Number(r?.data?.total || 0)
+  } finally {
+    loading.value = false
+  }
+}
+
+function onSizeChange() {
+  page.value = 1
+  loadData()
 }
 
 function openEdit(row) {
@@ -96,6 +134,7 @@ async function save() {
   await saveGoods(form.value)
   visible.value = false
   ElMessage.success('保存成功')
+  page.value = 1
   loadData()
 }
 
@@ -126,6 +165,7 @@ function beforeImageUpload(file) {
 async function del(id) {
   await deleteGoods(id)
   ElMessage.success('已删除')
+  if (list.value.length === 1 && page.value > 1) page.value--
   loadData()
 }
 </script>
@@ -141,6 +181,18 @@ async function del(id) {
 .image-empty {
   color: var(--text);
   font-size: 12px;
+}
+
+.goods-thumb :deep(.el-image__error) {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  overflow-x: auto;
 }
 
 .goods-upload-row {
