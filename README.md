@@ -232,8 +232,11 @@ pnpm run dev        # 启动开发服务器
 - `GET /api/goods/recommend`：按用户偏好分类、全站热度和商品时间返回推荐结果
 - `goods_click_record` 由后端启动时通过 `schema.sql` 自动增量创建，不会清空已有数据
 
-根目录 `community/` 中的 10 张食品图片会复制到商城公共资源目录；对应演示商品由
-`mall-portal-server/src/main/resources/data.sql` 幂等初始化，重复启动不会重复插入。
+根目录 `community/` 中的 10 张食品图片保存在管理后端的
+`src/main/resources/static/community-products/`，由 Spring Boot 的
+`/community-products/**` 统一提供；两个前端只保存图片 URL，并在开发环境代理到
+`admin-server:8082`。对应演示商品由 `mall-portal-server/src/main/resources/data.sql`
+幂等初始化，重复启动不会重复插入。
 
 ---
 

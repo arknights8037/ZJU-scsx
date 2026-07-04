@@ -22,6 +22,10 @@ export default defineConfig({
       '/admin-uploads': {
         target: 'http://localhost:8082',
         changeOrigin: true
+      },
+      '/community-products': {
+        target: 'http://localhost:8082',
+        changeOrigin: true
       }
     }
   }
