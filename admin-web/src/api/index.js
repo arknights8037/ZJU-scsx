@@ -57,5 +57,6 @@ export const getOrderPage = (params) => request.get('/admin/order/page', { param
 export const getOrderDetails = (orderNo) => request.get(`/admin/order/${orderNo}/details`)
 
 export const getSpecialList = () => request.get('/admin/special/list')
+export const getSpecialDetail = (id) => request.get(`/admin/special/${id}`)
 export const saveSpecial = (data) => request.post('/admin/special', data)
 export const deleteSpecial = (id) => request.delete(`/admin/special/${id}`)

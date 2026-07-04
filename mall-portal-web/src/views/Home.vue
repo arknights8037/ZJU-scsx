@@ -72,23 +72,28 @@
       </div>
     </section>
 
-    <!-- 促销商品：只展示前 4 个，避免首页太长太乱 -->
+    <!-- 展示后台配置的第一场有效促销，商品数量由活动的 maxItems 控制。 -->
     <section v-if="specials.length && specialGoods.length" class="section">
       <div class="section-head">
         <div>
-          <h2>限时促销</h2>
-          <p>社区精选优惠商品。</p>
+          <h2>{{ activeSpecial?.specialName || '限时促销' }}</h2>
+          <p>{{ activeSpecial?.specialSubtitle || '社区精选优惠商品。' }}</p>
         </div>
         <el-button text :icon="ArrowRight" @click="$router.push('/goods')">更多</el-button>
       </div>
       <div class="goods-grid compact">
-        <div v-for="item in specialGoods.slice(0, 4)" :key="item.goodsNo" class="goods-card" @click="goDetail(item)">
+        <div v-for="item in specialGoods" :key="item.goodsNo" class="goods-card promotion-card" @click="goDetail(item)">
+          <span class="promotion-badge">{{ item.badgeText || item.promotionLabel }}</span>
           <el-image :src="item.goodsPicture" fit="cover" class="goods-img">
             <template #error><div class="img-placeholder">暂无图片</div></template>
           </el-image>
           <div class="goods-info">
             <p class="goods-name">{{ item.goodsName }}</p>
-            <p class="goods-price">¥{{ item.goodsMarketPrice }}</p>
+            <div class="promotion-price-row">
+              <p class="goods-price">{{ item.promotionPrice == null ? '暂无标价' : `¥${item.promotionPrice}` }}</p>
+              <del v-if="item.goodsMarketPrice != null">¥{{ item.goodsMarketPrice }}</del>
+              <span>{{ item.promotionLabel }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -132,7 +137,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   ArrowRight,
@@ -155,6 +160,7 @@ const topCategories = ref([])
 const subCategories = ref([])
 const specials = ref([])
 const specialGoods = ref([])
+const activeSpecial = computed(() => specials.value[0] || null)
 const goodsList = ref([])
 const currentPage = ref(1)
 const pageSize = ref(12)
@@ -207,7 +213,7 @@ async function loadGoods() {
   } catch (e) { /* handled by interceptor */ }
 }
 
-// 加载促销专题商品。当前只取第一个专题做首页展示。
+// 后端已经过滤未开始、已结束和已停用活动，这里取排序最靠前的一场。
 async function loadSpecials() {
   try {
     const res = await getSpecialList()
@@ -472,6 +478,45 @@ function goDetail(item) {
 
 .goods-grid.compact .goods-img {
   height: 180px;
+}
+
+.promotion-card {
+  position: relative;
+}
+
+.promotion-badge {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  max-width: calc(100% - 20px);
+  padding: 3px 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  color: #fff;
+  background: #c42b1c;
+  box-shadow: 0 2px 8px rgba(196, 43, 28, 0.24);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.promotion-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.promotion-price-row del {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.promotion-price-row > span {
+  color: #c42b1c;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {
