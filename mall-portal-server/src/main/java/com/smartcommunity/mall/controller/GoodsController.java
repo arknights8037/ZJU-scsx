@@ -35,6 +35,25 @@ public class GoodsController {
         return Result.ok(goodsService.getByGoodsNo(goodsNo));
     }
 
+    /**
+     * 记录当前登录用户的一次商品点击。未登录用户没有 userId，因此不写个人记录。
+     */
+    @PostMapping("/{goodsNo}/click")
+    public Result<Void> recordClick(
+            @PathVariable String goodsNo,
+            @RequestAttribute(required = false) Integer userId) {
+        goodsService.recordClick(userId, goodsNo);
+        return Result.ok();
+    }
+
+    @GetMapping("/recommend")
+    public Result<List<Goods>> recommend(
+            @RequestAttribute(required = false) Integer userId,
+            @RequestParam(required = false) String excludeGoodsNo,
+            @RequestParam(defaultValue = "6") Integer size) {
+        return Result.ok(goodsService.recommend(userId, excludeGoodsNo, size));
+    }
+
     @GetMapping("/{goodsNo}/pictures")
     public Result<List<GoodsPicture>> pictures(@PathVariable String goodsNo) {
         return Result.ok(goodsService.getPictures(goodsNo));

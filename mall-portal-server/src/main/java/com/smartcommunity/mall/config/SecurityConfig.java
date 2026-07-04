@@ -65,6 +65,8 @@ public class SecurityConfig {
                 // 公开接口
                 .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                 .requestMatchers("/api/goods/**", "/api/category/**", "/api/store/**", "/api/special/**").permitAll()
+                // 图片由 img 标签直接访问，不会携带 Authorization 请求头，因此静态图片需要公开。
+                .requestMatchers("/mall-uploads/**").permitAll()
                 // 兼容老师示例工程中的旧路径
                 .requestMatchers("/goods/**", "/store/**", "/carts/**", "/orders/**").permitAll()
                 // 其余接口需要认证

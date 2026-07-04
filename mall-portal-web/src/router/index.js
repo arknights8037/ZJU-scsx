@@ -9,6 +9,7 @@ const routes = [
       { path: 'goods', name: 'GoodsList', component: () => import('@/views/GoodsList.vue'), meta: { title: '商品列表' } },
       { path: 'goods/:goodsNo', name: 'GoodsDetail', component: () => import('@/views/GoodsDetail.vue'), meta: { title: '商品详情' } },
       { path: 'community', name: 'Community', component: () => import('@/views/Community.vue'), meta: { title: '社区服务' } },
+      { path: 'profile', name: 'Profile', component: () => import('@/views/Profile.vue'), meta: { title: '个人中心' } },
       { path: 'cart', name: 'Cart', component: () => import('@/views/Cart.vue'), meta: { title: '购物车' } },
       { path: 'order', name: 'Order', component: () => import('@/views/Order.vue'), meta: { title: '我的订单' } },
     ]

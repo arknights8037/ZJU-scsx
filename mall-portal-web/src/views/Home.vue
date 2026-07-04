@@ -120,6 +120,7 @@
         <el-pagination
           background
           layout="prev, pager, next"
+          :pager-count="5"
           :total="total"
           :page-size="pageSize"
           v-model:current-page="currentPage"
@@ -279,9 +280,11 @@ function goDetail(item) {
   padding: 34px;
   color: #fff;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(14, 116, 144, 0.72)),
-    url('../assets/hero.png') center/cover;
+    linear-gradient(110deg, rgba(9, 31, 52, 0.88), rgba(15, 108, 189, 0.68), rgba(0, 120, 128, 0.42)),
+    url('/smartcommunitybackground.webp') center/cover;
   border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
@@ -322,9 +325,11 @@ function goDetail(item) {
 
 .hero-panel {
   align-self: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(14px);
+  background: rgba(240, 248, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: 0 12px 30px rgba(4, 23, 39, 0.14), 0 1px 0 rgba(255, 255, 255, 0.26) inset;
   border-radius: var(--radius);
   padding: 18px;
 }
@@ -362,13 +367,15 @@ function goDetail(item) {
   gap: 12px;
   min-height: 86px;
   padding: 16px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius);
-  background: var(--bg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px) saturate(1.2);
   color: var(--text);
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s;
+  transition: transform var(--motion), box-shadow var(--motion), border-color var(--motion);
 }
 
 .service-card:hover {
@@ -417,10 +424,21 @@ function goDetail(item) {
 
 .category-band,
 .section {
-  border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg);
+}
+
+.category-band {
   padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.section {
+  padding: 4px 0;
+  background: transparent;
+  border: 0;
 }
 
 .section-head {

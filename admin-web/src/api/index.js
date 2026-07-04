@@ -43,6 +43,11 @@ export const getChargeDetails = (chargeNo) => request.get(`/admin/community/char
 export const getGoodsPage = (params) => request.get('/admin/goods/page', { params })
 export const saveGoods = (data) => request.post('/admin/goods', data)
 export const deleteGoods = (id) => request.delete(`/admin/goods/${id}`)
+export const uploadGoodsImage = (file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request.post('/admin/file/image', formData)
+}
 
 export const getCategoryList = () => request.get('/admin/category/list')
 export const saveCategory = (data) => request.post('/admin/category', data)

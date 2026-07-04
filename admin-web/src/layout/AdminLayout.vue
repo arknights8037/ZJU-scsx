@@ -130,12 +130,16 @@ function logout() {
 .admin-layout {
   height: 100vh;
   overflow: hidden;
-  background: var(--bg);
+  background: transparent;
 }
 
 /* ===== 侧边栏 ===== */
 .sidebar {
-  background: #111827;
+  background: rgba(246, 250, 254, 0.86);
+  border-right: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 8px 0 28px rgba(37, 52, 68, 0.07), 1px 0 0 rgba(78, 96, 116, 0.10);
+  backdrop-filter: blur(26px) saturate(1.25);
+  -webkit-backdrop-filter: blur(26px) saturate(1.25);
   height: 100vh;
   position: relative;
   overflow: hidden;
@@ -150,7 +154,7 @@ function logout() {
   gap: 10px;
   padding: 20px 18px 18px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(78, 96, 116, 0.10);
   user-select: none;
 }
 
@@ -160,9 +164,10 @@ function logout() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #0f6cbd, #3a96dd);
   border-radius: 8px;
   color: #fff;
+  box-shadow: 0 5px 14px rgba(15, 108, 189, 0.24), 0 1px 0 rgba(255, 255, 255, 0.34) inset;
   flex-shrink: 0;
 }
 
@@ -180,14 +185,14 @@ function logout() {
 .brand-name {
   font-size: 14px;
   font-weight: 600;
-  color: #f1f5f9;
-  letter-spacing: 0.3px;
+  color: var(--text-h);
+  letter-spacing: 0;
 }
 
 .brand-sub {
   font-size: 11px;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.5px;
+  color: var(--text-soft);
+  letter-spacing: 0;
 }
 
 /* 导航 */
@@ -218,20 +223,24 @@ function logout() {
   height: 40px;
   line-height: 40px;
   border-radius: 8px;
-  color: #94a3b8;
+  color: #4f5966;
   font-size: 14px;
-  transition: all 0.2s;
+  border: 1px solid transparent;
+  transition: background-color var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
 }
 
 .nav-item:hover,
 .nav-group :deep(.el-sub-menu__title:hover) {
-  background: rgba(255,255,255,0.05);
-  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.62);
+  border-color: var(--border-light);
+  color: var(--text-h);
 }
 
 .nav-item.is-active {
-  background: rgba(99, 102, 241, 0.15) !important;
-  color: #a5b4fc !important;
+  background: var(--accent-bg) !important;
+  border-color: rgba(15, 108, 189, 0.12) !important;
+  color: var(--accent) !important;
+  box-shadow: 3px 0 0 var(--accent) inset;
 }
 
 .nav-icon {
@@ -258,18 +267,18 @@ function logout() {
   border-radius: 6px;
   padding-left: 50px !important;
   font-size: 13px;
-  color: #94a3b8;
+  color: #65707d;
   background: transparent !important;
 }
 
 .nav-sub-item:hover {
-  background: rgba(255,255,255,0.04) !important;
-  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.58) !important;
+  color: var(--text-h);
 }
 
 .nav-sub-item.is-active {
-  background: rgba(99, 102, 241, 0.12) !important;
-  color: #a5b4fc !important;
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
 }
 
 /* 底部 */
@@ -279,7 +288,7 @@ function logout() {
   left: 0;
   right: 0;
   padding: 12px 14px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(78, 96, 116, 0.10);
 }
 
 .user-mini {
@@ -289,18 +298,20 @@ function logout() {
   padding: 8px 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  border: 1px solid transparent;
+  transition: background-color var(--motion-fast), border-color var(--motion-fast);
 }
 
 .user-mini:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.64);
+  border-color: var(--border-light);
 }
 
 .user-avatar {
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #0f6cbd, #3a96dd);
   color: #fff;
   display: flex;
   align-items: center;
@@ -312,7 +323,7 @@ function logout() {
 
 .user-name-mini {
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--text-h);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -327,14 +338,16 @@ function logout() {
 /* ===== 顶栏 ===== */
 .topbar {
   height: 56px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  background: rgba(249, 252, 255, 0.74);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.78);
+  box-shadow: 0 1px 0 rgba(78, 96, 116, 0.10), 0 5px 18px rgba(37, 52, 68, 0.04);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
   flex-shrink: 0;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
 }
 
 .topbar-left {
@@ -380,7 +393,7 @@ function logout() {
 
 .btn-logout {
   border: 1px solid var(--border);
-  background: none;
+  background: rgba(255, 255, 255, 0.58);
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 13px;
@@ -399,7 +412,7 @@ function logout() {
 /* ===== 主体 ===== */
 .main-content {
   padding: 28px 28px 40px;
-  background: var(--bg-secondary, #f8fafc);
+  background: transparent;
   overflow-y: auto;
   flex: 1;
 }

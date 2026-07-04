@@ -75,7 +75,6 @@
             class="login-btn"
             @click="doLogin"
             :loading="loading"
-            round
           >
             登 录
           </el-button>
@@ -119,12 +118,15 @@ async function doLogin() {
   display: flex;
   min-height: 100vh;
   overflow: hidden;
+  background: linear-gradient(135deg, #f9fcff 0%, #eaf4fd 52%, #f5f2fa 100%);
 }
 
 /* ===== 左侧品牌区 ===== */
 .login-brand {
   flex: 0 0 44%;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  background:
+    linear-gradient(115deg, rgba(8, 35, 59, 0.90), rgba(15, 108, 189, 0.64), rgba(0, 120, 128, 0.34)),
+    url('/smartcommunitybackground.webp') center/cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -133,28 +135,15 @@ async function doLogin() {
   position: relative;
   overflow: hidden;
   color: #fff;
+  box-shadow: 12px 0 36px rgba(37, 52, 68, 0.12);
 }
 
 .login-brand::before {
-  content: '';
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
-  top: -150px;
-  right: -200px;
+  content: none;
 }
 
 .login-brand::after {
-  content: '';
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-  bottom: -100px;
-  left: -100px;
+  content: none;
 }
 
 .brand-content {
@@ -165,6 +154,15 @@ async function doLogin() {
 
 .brand-icon {
   margin-bottom: 28px;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 30px rgba(4, 23, 39, 0.16), 0 1px 0 rgba(255, 255, 255, 0.22) inset;
+  backdrop-filter: blur(18px);
 }
 
 .brand-icon svg {
@@ -177,7 +175,7 @@ async function doLogin() {
   font-weight: 700;
   margin: 0 0 14px;
   color: #fff;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 .brand-desc {
@@ -206,7 +204,8 @@ async function doLogin() {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: #7dc3ff;
+  box-shadow: 0 0 0 4px rgba(125, 195, 255, 0.16);
   flex-shrink: 0;
 }
 
@@ -224,13 +223,20 @@ async function doLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  background: transparent;
   padding: 40px;
 }
 
 .login-form-wrap {
   width: 400px;
   max-width: 100%;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(26px) saturate(1.25);
+  -webkit-backdrop-filter: blur(26px) saturate(1.25);
 }
 
 .form-header {
@@ -267,7 +273,7 @@ async function doLogin() {
   font-weight: 500;
   color: var(--text-h);
   margin-bottom: 6px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0;
 }
 
 .custom-input :deep(.el-input__wrapper) {
@@ -290,7 +296,7 @@ async function doLogin() {
   height: 46px;
   font-size: 15px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0;
 }
 
 /* ===== 响应式 ===== */
@@ -334,6 +340,10 @@ async function doLogin() {
 
   .login-main {
     padding: 28px 20px;
+  }
+
+  .login-form-wrap {
+    padding: 24px 20px;
   }
 }
 </style>

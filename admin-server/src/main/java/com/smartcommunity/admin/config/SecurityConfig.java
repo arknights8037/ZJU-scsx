@@ -78,6 +78,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 公开接口
                 .requestMatchers("/api/auth/login").permitAll()
+                // 商品图片需要在商城页面直接展示。
+                .requestMatchers("/admin-uploads/**").permitAll()
                 // 其余接口需要认证
                 .anyRequest().authenticated()
             )

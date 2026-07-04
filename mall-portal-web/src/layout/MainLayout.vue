@@ -60,6 +60,9 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item @click="$router.push('/profile')">
+                    <el-icon><User /></el-icon>个人中心
+                  </el-dropdown-item>
                   <el-dropdown-item @click="$router.push('/order')">
                     <el-icon><Document /></el-icon>我的订单
                   </el-dropdown-item>
@@ -108,16 +111,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { Document, OfficeBuilding, ShoppingCart, SwitchButton } from '@element-plus/icons-vue'
+import { Document, OfficeBuilding, ShoppingCart, SwitchButton, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const searchKeyword = ref('')
 const mobileMenuOpen = ref(false)
 
 const isLoggedIn = computed(() => !!localStorage.getItem('token'))
-const userPhone = computed(() => localStorage.getItem('phone') || '用户')
+const userPhone = ref(localStorage.getItem('userName') || localStorage.getItem('phone') || '用户')
+
+// localStorage 本身不是响应式数据，个人中心保存后通过自定义事件刷新顶部用户名。
+function syncUserDisplay() {
+  userPhone.value = localStorage.getItem('userName') || localStorage.getItem('phone') || '用户'
+}
+
+onMounted(() => window.addEventListener('profile-updated', syncUserDisplay))
+onBeforeUnmount(() => window.removeEventListener('profile-updated', syncUserDisplay))
 
 function onSearch() {
   if (searchKeyword.value.trim()) {
@@ -140,15 +151,16 @@ function logout() {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  background: transparent;
 }
 
 /* ===== Header ===== */
 .header {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  background: rgba(249, 252, 255, 0.76);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.78);
+  box-shadow: 0 1px 0 rgba(78, 96, 116, 0.10), 0 5px 18px rgba(37, 52, 68, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -177,12 +189,13 @@ function logout() {
 .logo-icon {
   width: 30px;
   height: 30px;
-  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  background: linear-gradient(135deg, #0f6cbd, #3a96dd);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
+  box-shadow: 0 4px 12px rgba(15, 108, 189, 0.24), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
 }
 
 .logo-icon svg {
@@ -194,7 +207,7 @@ function logout() {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-h);
-  letter-spacing: -0.2px;
+  letter-spacing: 0;
 }
 
 /* 导航 */
@@ -210,19 +223,23 @@ function logout() {
   font-size: 14px;
   padding: 7px 14px;
   border-radius: 7px;
-  transition: all 0.2s;
+  border: 1px solid transparent;
+  transition: background-color var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
   font-weight: 450;
 }
 
 .nav-links a:hover {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.66);
+  border-color: var(--border-light);
   color: var(--text-h);
 }
 
 .nav-links a.router-link-active {
   background: var(--accent-bg);
+  border-color: rgba(15, 108, 189, 0.13);
   color: var(--accent);
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
 }
 
 /* 右侧 */
@@ -239,20 +256,21 @@ function logout() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-secondary, #f1f5f9);
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 0 12px;
   height: 36px;
-  transition: all 0.25s;
+  box-shadow: 0 1px 2px rgba(37, 52, 68, 0.04);
+  transition: background-color var(--motion), border-color var(--motion), box-shadow var(--motion);
   max-width: 260px;
   flex: 1;
 }
 
 .search-box:focus-within {
   border-color: var(--accent-border);
-  background: var(--bg);
-  box-shadow: 0 0 0 3px var(--accent-bg);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 3px var(--accent-bg), 0 6px 16px rgba(37, 52, 68, 0.08);
 }
 
 .search-icon {
@@ -280,14 +298,15 @@ function logout() {
 /* 用户 */
 .btn-nav {
   border: 1px solid var(--border);
-  background: none;
+  background: rgba(255, 255, 255, 0.58);
   padding: 7px 16px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-h);
   cursor: pointer;
-  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast), box-shadow var(--motion-fast);
   font-family: inherit;
   flex-shrink: 0;
 }
@@ -295,6 +314,8 @@ function logout() {
 .btn-nav:hover {
   border-color: var(--accent-border);
   color: var(--accent);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow);
 }
 
 .user-chip {
@@ -304,18 +325,20 @@ function logout() {
   padding: 4px 12px 4px 4px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  border: 1px solid transparent;
+  transition: background-color var(--motion-fast), border-color var(--motion-fast);
 }
 
 .user-chip:hover {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.66);
+  border-color: var(--border-light);
 }
 
 .user-chip-avatar {
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #0f6cbd, #3a96dd);
   color: #fff;
   display: flex;
   align-items: center;
@@ -358,7 +381,7 @@ function logout() {
 /* ===== Main ===== */
 .main-content {
   flex: 1;
-  padding: 28px 24px 40px;
+  padding: 30px 24px 44px;
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
@@ -367,8 +390,9 @@ function logout() {
 
 /* ===== Footer ===== */
 .footer {
-  border-top: 1px solid var(--border);
-  background: var(--bg);
+  border-top: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(248, 251, 255, 0.66);
+  backdrop-filter: blur(20px);
 }
 
 .footer-content {
@@ -414,7 +438,7 @@ function logout() {
 }
 
 .footer-bottom {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(78, 96, 116, 0.12);
   text-align: center;
   padding: 14px 24px;
   font-size: 12px;
@@ -442,11 +466,12 @@ function logout() {
     top: 58px;
     left: 0;
     right: 0;
-    background: var(--bg);
+    background: rgba(249, 252, 255, 0.94);
+    backdrop-filter: blur(24px) saturate(1.25);
     border-bottom: 1px solid var(--border);
     flex-direction: column;
     padding: 8px 14px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-md);
     z-index: 99;
     display: none;
   }

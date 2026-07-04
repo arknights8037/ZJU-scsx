@@ -64,7 +64,7 @@
               <template #prefix><el-icon><Lock /></el-icon></template>
             </el-input>
           </div>
-          <el-button type="primary" size="large" class="submit-btn" @click="doLogin" :loading="loading" round>
+          <el-button type="primary" size="large" class="submit-btn" @click="doLogin" :loading="loading">
             登 录
           </el-button>
         </el-form>
@@ -89,7 +89,7 @@
               <template #prefix><el-icon><Lock /></el-icon></template>
             </el-input>
           </div>
-          <el-button type="primary" size="large" class="submit-btn" @click="doRegister" :loading="regLoading" round>
+          <el-button type="primary" size="large" class="submit-btn" @click="doRegister" :loading="regLoading">
             注 册
           </el-button>
         </el-form>
@@ -156,12 +156,15 @@ async function doRegister() {
   display: flex;
   min-height: 100vh;
   overflow: hidden;
+  background: linear-gradient(135deg, #f9fcff 0%, #eaf4fd 52%, #f5f2fa 100%);
 }
 
 /* ===== 左侧品牌区 ===== */
 .login-brand {
   flex: 0 0 44%;
-  background: linear-gradient(135deg, #0c3483 0%, #0a5c8a 40%, #1e7e5e 100%);
+  background:
+    linear-gradient(115deg, rgba(8, 35, 59, 0.88), rgba(15, 108, 189, 0.62), rgba(0, 120, 128, 0.34)),
+    url('/smartcommunitybackground.webp') center/cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -170,28 +173,15 @@ async function doRegister() {
   position: relative;
   overflow: hidden;
   color: #fff;
+  box-shadow: 12px 0 36px rgba(37, 52, 68, 0.12);
 }
 
 .login-brand::before {
-  content: '';
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
-  top: -100px;
-  right: -150px;
+  content: none;
 }
 
 .login-brand::after {
-  content: '';
-  position: absolute;
-  width: 350px;
-  height: 350px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
-  bottom: -80px;
-  left: -80px;
+  content: none;
 }
 
 .brand-content {
@@ -202,6 +192,15 @@ async function doRegister() {
 
 .brand-icon {
   margin-bottom: 28px;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 30px rgba(4, 23, 39, 0.16), 0 1px 0 rgba(255, 255, 255, 0.22) inset;
+  backdrop-filter: blur(18px);
 }
 
 .brand-icon svg {
@@ -214,7 +213,7 @@ async function doRegister() {
   font-weight: 700;
   margin: 0 0 14px;
   color: #fff;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 .brand-desc {
@@ -243,7 +242,8 @@ async function doRegister() {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: #7dc3ff;
+  box-shadow: 0 0 0 4px rgba(125, 195, 255, 0.16);
   flex-shrink: 0;
 }
 
@@ -261,13 +261,20 @@ async function doRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  background: transparent;
   padding: 40px;
 }
 
 .login-form-wrap {
   width: 400px;
   max-width: 100%;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(26px) saturate(1.25);
+  -webkit-backdrop-filter: blur(26px) saturate(1.25);
 }
 
 .form-header {
@@ -290,7 +297,8 @@ async function doRegister() {
 /* ===== Tab 切换 ===== */
 .tab-switch {
   display: flex;
-  background: var(--bg-secondary, #f1f3f5);
+  background: rgba(226, 236, 246, 0.68);
+  border: 1px solid rgba(78, 96, 116, 0.10);
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 24px;
@@ -311,9 +319,9 @@ async function doRegister() {
 }
 
 .tab-btn.active {
-  background: #fff;
-  color: var(--text-h);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  background: rgba(255, 255, 255, 0.90);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(37, 52, 68, 0.10), 0 1px 0 rgba(255, 255, 255, 0.7) inset;
 }
 
 /* ===== 表单 ===== */
@@ -333,7 +341,7 @@ async function doRegister() {
   font-weight: 500;
   color: var(--text-h);
   margin-bottom: 6px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0;
 }
 
 .custom-input :deep(.el-input__wrapper) {
@@ -356,7 +364,7 @@ async function doRegister() {
   height: 46px;
   font-size: 15px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0;
 }
 
 /* ===== 响应式 ===== */
@@ -400,6 +408,10 @@ async function doRegister() {
 
   .login-main {
     padding: 28px 20px;
+  }
+
+  .login-form-wrap {
+    padding: 24px 20px;
   }
 }
 </style>

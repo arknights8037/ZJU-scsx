@@ -22,6 +22,7 @@
       <el-pagination
         background
         layout="prev, pager, next"
+        :pager-count="5"
         :total="total"
         :page-size="pageSize"
         v-model:current-page="currentPage"

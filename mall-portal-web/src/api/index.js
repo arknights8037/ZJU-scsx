@@ -13,6 +13,19 @@ export function getGoodsPictures(goodsNo) {
   return request.get(`/goods/${goodsNo}/pictures`)
 }
 
+export function getGoodsStores(goodsNo) {
+  return request.get(`/goods/${goodsNo}/stores`)
+}
+
+// 点击记录只认 Token 中的用户身份，前端不需要传 userId。
+export function recordGoodsClick(goodsNo) {
+  return request.post(`/goods/${goodsNo}/click`)
+}
+
+export function getGoodsRecommendations(params) {
+  return request.get('/goods/recommend', { params })
+}
+
 // ========== 分类 ==========
 export function getCategories() {
   return request.get('/category/all')
@@ -30,6 +43,25 @@ export function login(phone, password) {
 
 export function register(data) {
   return request.post('/user/register', data)
+}
+
+// 获取和修改当前登录用户资料，userId 由后端从 Token 中识别。
+export function getUserProfile() {
+  return request.get('/user/profile')
+}
+
+export function updateUserProfile(data) {
+  return request.put('/user/profile', data)
+}
+
+export function changeUserPassword(data) {
+  return request.put('/user/password', data)
+}
+
+export function uploadUserImage(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request.post('/file/image', formData)
 }
 
 // ========== 购物车 ==========

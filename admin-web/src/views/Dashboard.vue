@@ -10,7 +10,7 @@
     <!-- 统计卡片 -->
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-icon" style="background: rgba(99,102,241,0.1); color: #6366f1;">
+        <div class="stat-icon" style="background: rgba(15,108,189,0.1); color: #0f6cbd;">
           <svg viewBox="0 0 20 20" fill="none" width="20" height="20">
             <path d="M10 4a4 4 0 100 8 4 4 0 000-8zM3 16c0-2.8 3.1-5 7-5s7 2.2 7 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
@@ -67,7 +67,7 @@
     <div class="quick-grid">
       <div v-for="card in cards" :key="card.title" class="quick-card" @click="$router.push(card.path)">
         <div class="quick-card-icon">
-          <span>{{ card.icon }}</span>
+          <el-icon><component :is="card.icon" /></el-icon>
         </div>
         <div class="quick-card-text">
           <span class="quick-card-title">{{ card.title }}</span>
@@ -82,15 +82,17 @@
 </template>
 
 <script setup>
+import { Bell, Document, Goods, House, Location, Lock, Shop, User } from '@element-plus/icons-vue'
+
 const cards = [
-  { icon: '👥', title: '用户管理', desc: '管理系统用户与角色权限', path: '/auth/user' },
-  { icon: '🏷️', title: '角色管理', desc: '配置角色与菜单权限', path: '/auth/role' },
-  { icon: '📦', title: '商品管理', desc: '管理商城商品信息', path: '/goods/index' },
-  { icon: '📋', title: '订单管理', desc: '查看与处理订单', path: '/order/index' },
-  { icon: '🏠', title: '区域管理', desc: '管理社区区域划分', path: '/area/index' },
-  { icon: '🏪', title: '门店管理', desc: '管理门店与状态', path: '/area/store' },
-  { icon: '🅿️', title: '车位管理', desc: '管理社区车位资源', path: '/community/parking' },
-  { icon: '📢', title: '通知公告', desc: '发布社区通知', path: '/community/notice' },
+  { icon: User, title: '用户管理', desc: '管理系统用户与角色权限', path: '/auth/user' },
+  { icon: Lock, title: '角色管理', desc: '配置角色与菜单权限', path: '/auth/role' },
+  { icon: Goods, title: '商品管理', desc: '管理商城商品信息', path: '/goods/index' },
+  { icon: Document, title: '订单管理', desc: '查看与处理订单', path: '/order/index' },
+  { icon: House, title: '区域管理', desc: '管理社区区域划分', path: '/area/index' },
+  { icon: Shop, title: '门店管理', desc: '管理门店与状态', path: '/area/store' },
+  { icon: Location, title: '车位管理', desc: '管理社区车位资源', path: '/community/parking' },
+  { icon: Bell, title: '通知公告', desc: '发布社区通知', path: '/community/notice' },
 ]
 </script>
 
@@ -121,14 +123,15 @@ const cards = [
 }
 
 .stat-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: 18px;
   display: flex;
   align-items: center;
   gap: 14px;
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px) saturate(1.2);
   cursor: pointer;
   transition: all 0.25s;
 }
@@ -177,8 +180,8 @@ const cards = [
 }
 
 .quick-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   display: flex;
@@ -187,6 +190,7 @@ const cards = [
   cursor: pointer;
   transition: all 0.25s;
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px) saturate(1.2);
 }
 
 .quick-card:hover {
@@ -199,7 +203,8 @@ const cards = [
   width: 42px;
   height: 42px;
   border-radius: var(--radius);
-  background: var(--bg-secondary);
+  background: var(--accent-bg);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;

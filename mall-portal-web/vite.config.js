@@ -14,6 +14,14 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8081',
         changeOrigin: true
+      },
+      '/mall-uploads': {
+        target: 'http://localhost:8081',
+        changeOrigin: true
+      },
+      '/admin-uploads': {
+        target: 'http://localhost:8082',
+        changeOrigin: true
       }
     }
   }
