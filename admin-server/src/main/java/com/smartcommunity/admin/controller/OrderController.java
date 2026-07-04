@@ -1,11 +1,10 @@
 package com.smartcommunity.admin.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smartcommunity.admin.common.Result;
-import com.smartcommunity.admin.entity.OrderDetail;
-import com.smartcommunity.admin.entity.Orders;
-import com.smartcommunity.admin.mapper.OrderDetailMapper;
-import com.smartcommunity.admin.mapper.OrdersMapper;
+import com.smartcommunity.admin.dto.AdminOrderDetailView;
+import com.smartcommunity.admin.dto.AdminOrderView;
+import com.smartcommunity.admin.service.AdminOrderService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +14,19 @@ import java.util.List;
 @RequestMapping("/api/admin/order")
 @RequiredArgsConstructor
 public class OrderController {
-    private final OrdersMapper ordersMapper;
-    private final OrderDetailMapper orderDetailMapper;
+    private final AdminOrderService orderService;
 
     @GetMapping("/page")
-    public Result<?> page(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<Orders> p = ordersMapper.selectPage(new Page<>(page, size), null);
-        return Result.ok(p);
+    public Result<Page<AdminOrderView>> page(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer orderState) {
+        return Result.ok(orderService.page(page, size, keyword, orderState));
     }
 
     @GetMapping("/{orderNo}/details")
-    public Result<List<OrderDetail>> details(@PathVariable String orderNo) {
-        return Result.ok(orderDetailMapper.selectList(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<OrderDetail>()
-                        .eq(OrderDetail::getOrderNo, orderNo)));
+    public Result<List<AdminOrderDetailView>> details(@PathVariable String orderNo) {
+        return Result.ok(orderService.details(orderNo));
     }
 }
