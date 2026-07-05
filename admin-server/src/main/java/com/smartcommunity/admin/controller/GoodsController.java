@@ -21,6 +21,10 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 商品管理控制器，提供商品分页查询、新增/编辑及删除功能。
+ * 请求路径前缀：/api/admin/goods
+ */
 @RestController
 @RequestMapping("/api/admin/goods")
 @RequiredArgsConstructor
@@ -28,6 +32,14 @@ public class GoodsController {
     private final GoodsMapper goodsMapper;
     private final CategoryMapper categoryMapper;
 
+    /**
+     * 分页查询商品列表，返回带类别名称的视图对象。
+     * 按商品 ID 降序排列，新发布的商品优先显示。
+     *
+     * @param page 页码，默认 1
+     * @param size 每页条数，默认 10，最大 100
+     * @return 商品分页数据（含类别名称）
+     */
     @GetMapping("/page")
     public Result<Page<AdminGoodsView>> page(
             @RequestParam(defaultValue = "1") int page,
@@ -55,6 +67,13 @@ public class GoodsController {
         return Result.ok(result);
     }
 
+    /**
+     * 新增或编辑商品。
+     * 校验商品名称、类别必填；商品编号为空时自动生成；检查编号唯一性。
+     *
+     * @param g 商品实体
+     * @return 操作结果
+     */
     @PostMapping
     public Result<Void> save(@RequestBody Goods g) {
         if (!StringUtils.hasText(g.getGoodsName())) {
@@ -84,6 +103,12 @@ public class GoodsController {
         return Result.ok();
     }
 
+    /**
+     * 根据 ID 删除商品。
+     *
+     * @param id 商品 ID
+     * @return 操作结果
+     */
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Integer id) { goodsMapper.deleteById(id); return Result.ok(); }
 }

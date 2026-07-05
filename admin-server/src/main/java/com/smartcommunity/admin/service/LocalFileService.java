@@ -17,6 +17,9 @@ import java.util.UUID;
 
 /**
  * 管理端商品图片本地存储服务。
+ *
+ * 图片文件保存到本地磁盘 uploads 目录，数据库只保存访问 URL 路径。
+ * 文件名由后端使用 UUID 重新生成，避免中文名、重名和路径穿越问题。
  */
 @Service
 public class LocalFileService {
@@ -30,6 +33,12 @@ public class LocalFileService {
         this.uploadRoot = Path.of(uploadDir).toAbsolutePath().normalize();
     }
 
+    /**
+     * 上传商品图片，校验后保存到按日期分组的目录中。
+     *
+     * @param file 上传的图片文件
+     * @return 文件上传结果（原始文件名、访问 URL、文件大小）
+     */
     public FileUploadResult uploadImage(MultipartFile file) {
         validateImage(file);
 
@@ -55,6 +64,11 @@ public class LocalFileService {
         return new FileUploadResult(originalName, url, file.getSize());
     }
 
+    /**
+     * 校验上传图片：非空、大小不超过 5MB、扩展名和 MIME 类型符合图片规范。
+     *
+     * @param file 待校验的图片文件
+     */
     private void validateImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new RuntimeException("请选择图片");
@@ -73,6 +87,12 @@ public class LocalFileService {
         }
     }
 
+    /**
+     * 从文件名中提取小写扩展名。
+     *
+     * @param filename 原始文件名
+     * @return 小写扩展名字符串（不含点号）
+     */
     private String getExtension(String filename) {
         int dot = filename.lastIndexOf('.');
         if (dot < 0 || dot == filename.length() - 1) {

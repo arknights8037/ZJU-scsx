@@ -11,6 +11,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // 开发环境把接口和后端静态资源都代理到 Spring Boot，前端代码保持同源访问。
       '/api': {
         target: 'http://localhost:8082',
         changeOrigin: true
@@ -20,6 +21,10 @@ export default defineConfig({
         changeOrigin: true
       },
       '/community-products': {
+        target: 'http://localhost:8082',
+        changeOrigin: true
+      },
+      '/mall-uploads': {
         target: 'http://localhost:8082',
         changeOrigin: true
       }

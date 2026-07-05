@@ -23,6 +23,7 @@
   --warning-bg: rgba(202, 80, 16, 0.09);
   --danger: #c42b1c;
   --danger-bg: rgba(196, 43, 28, 0.09);
+  --price-color: #c4314b;
   --code-bg: rgba(238, 244, 250, 0.86);
 
   --shadow-sm: 0 1px 2px rgba(27, 31, 36, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.45) inset;
@@ -120,6 +121,74 @@ p { margin: 0; color: var(--text); }
 .subtitle { margin-bottom: 20px; color: var(--text); font-size: 14px; }
 .page-empty { padding: 60px 20px; text-align: center; color: var(--text); }
 
+.goods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.goods-card {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  cursor: pointer;
+  transition: transform var(--motion), box-shadow var(--motion), border-color var(--motion);
+}
+
+.goods-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.goods-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  background: var(--surface-muted);
+}
+
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-muted);
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.goods-info { padding: 14px 14px 16px; }
+
+.goods-name {
+  margin: 0 0 8px;
+  overflow: hidden;
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goods-price {
+  margin: 0;
+  color: var(--price-color);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 28px 0;
+}
+
 .el-button,
 .el-input__wrapper,
 .el-select__wrapper,
@@ -129,9 +198,22 @@ p { margin: 0; color: var(--text); }
   transition: background-color var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast), color var(--motion-fast);
 }
 
-.el-button:not(.is-text) { box-shadow: 0 1px 2px rgba(27, 31, 36, 0.08); }
-.el-button--primary:not(.is-plain) { background: var(--accent); border-color: var(--accent); }
-.el-button--primary:not(.is-plain):hover {
+.el-button:not(.is-text):not(.is-link) { box-shadow: 0 1px 2px rgba(27, 31, 36, 0.08); }
+
+.el-button.is-text,
+.el-button.is-link {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.el-button.is-text:hover,
+.el-button.is-link:hover {
+  background: var(--accent-bg) !important;
+}
+
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link) { background: var(--accent); border-color: var(--accent); }
+.el-button--primary:not(.is-plain):not(.is-text):not(.is-link):hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
   box-shadow: 0 4px 12px rgba(15, 108, 189, 0.22);
@@ -172,7 +254,10 @@ p { margin: 0; color: var(--text); }
   border-radius: var(--radius);
 }
 
-@media (max-width: 1024px) { :root { font-size: 14px; } }
+@media (max-width: 1024px) {
+  :root { font-size: 14px; }
+  .goods-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

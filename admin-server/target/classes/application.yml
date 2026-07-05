@@ -7,11 +7,25 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      # 只执行 CREATE TABLE IF NOT EXISTS，不会覆盖老师提供的原始数据。
+      mode: always
+      encoding: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+app:
+  upload-dir: ${ADMIN_UPLOAD_DIR:uploads}
 
 mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
     db-config:
       id-type: auto
+      logic-delete-field: deleted
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

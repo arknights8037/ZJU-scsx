@@ -20,6 +20,12 @@ public class FileUploadController {
 
     private final LocalFileService localFileService;
 
+    /**
+     * 上传图片文件（目前用于商品主图上传）。
+     *
+     * @param file 上传的图片文件
+     * @return 上传结果，包含文件访问 URL
+     */
     @PostMapping("/image")
     public Result<FileUploadResult> uploadImage(@RequestParam("file") MultipartFile file) {
         return Result.ok(localFileService.uploadImage(file));

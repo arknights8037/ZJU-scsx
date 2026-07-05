@@ -1,8 +1,14 @@
+<!--
+  组件名称：Login
+  功能描述：后台管理系统登录页，左侧品牌展示区 + 右侧登录表单（手机号+密码）
+  路由路径：/admin/login
+-->
 <template>
   <div class="login-page">
-    <!-- 左侧品牌区 -->
+    <!-- 左侧品牌展示区 -->
     <div class="login-brand">
       <div class="brand-content">
+        <!-- 品牌 Logo -->
         <div class="brand-icon">
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="6" y="6" width="16" height="16" rx="3" fill="rgba(255,255,255,0.3)" />
@@ -13,6 +19,7 @@
         </div>
         <h1>智慧社区管理平台</h1>
         <p class="brand-desc">一站式社区运营管理解决方案<br/>高效 · 智能 · 便捷</p>
+        <!-- 品牌特色列表 -->
         <div class="brand-features">
           <div class="feature-item">
             <span class="feature-dot"></span>数据可视化大屏
@@ -25,12 +32,13 @@
           </div>
         </div>
       </div>
+      <!-- 版权信息 -->
       <div class="brand-footer">
         <span>© 2025 SmartCommunity</span>
       </div>
     </div>
 
-    <!-- 右侧表单区 -->
+    <!-- 右侧登录表单区 -->
     <div class="login-main">
       <div class="login-form-wrap">
         <div class="form-header">
@@ -39,6 +47,7 @@
         </div>
 
         <el-form :model="form" label-width="0" class="login-form" @keyup.enter="doLogin">
+          <!-- 手机号输入 -->
           <div class="input-group">
             <label class="input-label">手机号</label>
             <el-input
@@ -53,6 +62,7 @@
             </el-input>
           </div>
 
+          <!-- 密码输入 -->
           <div class="input-group">
             <label class="input-label">密码</label>
             <el-input
@@ -69,6 +79,7 @@
             </el-input>
           </div>
 
+          <!-- 登录按钮 -->
           <el-button
             type="primary"
             size="large"
@@ -85,6 +96,14 @@
 </template>
 
 <script setup>
+/**
+ * Login - 后台登录页
+ *
+ * 功能：
+ * - 手机号 + 密码登录
+ * - 登录成功后保存 token 并跳转到工作台
+ */
+
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login } from '@/api'
@@ -92,9 +111,13 @@ import { ElMessage } from 'element-plus'
 import { Phone, Lock } from '@element-plus/icons-vue'
 
 const router = useRouter()
-const loading = ref(false)
-const form = ref({ phone: '', password: '' })
+const loading = ref(false)                    // 登录按钮加载状态
+const form = ref({ phone: '', password: '' }) // 登录表单数据
 
+/**
+ * 执行登录操作
+ * 校验手机号和密码非空 -> 调用 login API -> 保存 token -> 跳转工作台
+ */
 async function doLogin() {
   if (!form.value.phone || !form.value.password) {
     ElMessage.warning('请输入手机号和密码')
@@ -104,9 +127,9 @@ async function doLogin() {
   try {
     const res = await login(form.value.phone, form.value.password)
     localStorage.setItem('admin_token', res.data.token)
-    router.push('/dashboard')
+    router.push('/admin/dashboard')
   } catch (e) {
-    /* handled by interceptor */
+    /* 请求拦截器中已处理错误提示，此处无需重复处理 */
   } finally {
     loading.value = false
   }

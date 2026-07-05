@@ -3,6 +3,7 @@ node_modules/
 .pnpm-store/
 
 # Build output
+target/
 dist/
 .vite/
 .vite-temp/
@@ -10,6 +11,9 @@ uploads/
 
 # Logs
 *.log
+
+# Local runtime state
+.codex-run/
 
 # IDE
 .vscode/
@@ -22,5 +26,3 @@ Thumbs.db
 # Env files
 .env.local
 .env.*.local
-
-./comefromteacher

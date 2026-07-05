@@ -28,6 +28,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 管理端促销活动管理服务。
+ * 提供促销活动的增删改查、商品关联、状态管理等功能。
+ */
 @Service
 @RequiredArgsConstructor
 public class AdminSpecialService {
@@ -39,6 +43,11 @@ public class AdminSpecialService {
     private final SpecialGoodsMapper specialGoodsMapper;
     private final GoodsMapper goodsMapper;
 
+    /**
+     * 获取促销活动列表，按 sortOrder 升序、id 降序排列。
+     *
+     * @return 活动视图列表，包含规则和商品数量
+     */
     public List<AdminSpecialView> list() {
         List<Special> specials = specialMapper.selectList(new LambdaQueryWrapper<Special>()
             .orderByDesc(Special::getId));
@@ -60,6 +69,12 @@ public class AdminSpecialService {
             .toList();
     }
 
+    /**
+     * 获取促销活动详情，包含关联的商品编号列表。
+     *
+     * @param id 活动 ID
+     * @return 活动视图对象
+     */
     public AdminSpecialView detail(Integer id) {
         Special special = requireSpecial(id);
         SpecialRule rule = findRule(id);
@@ -70,6 +85,14 @@ public class AdminSpecialService {
         return toView(special, rule, goodsNos.size(), goodsNos);
     }
 
+    /**
+     * 保存或更新促销活动（包含规则和商品关联）。
+     * 如果 request.id 为空则新建，否则更新已有活动。
+     * 整体逻辑：先保存活动主表，再保存规则，最后清除旧商品关联并重新插入。
+     *
+     * @param request 活动保存请求
+     * @return 活动 ID
+     */
     @Transactional
     public Integer save(SpecialSaveRequest request) {
         validate(request);
@@ -117,6 +140,11 @@ public class AdminSpecialService {
         return special.getId();
     }
 
+    /**
+     * 删除促销活动，同时级联删除关联的规则和商品关系。
+     *
+     * @param id 活动 ID
+     */
     @Transactional
     public void delete(Integer id) {
         requireSpecial(id);
@@ -126,6 +154,16 @@ public class AdminSpecialService {
         specialMapper.deleteById(id);
     }
 
+    /**
+     * 将 Special + SpecialRule 组装为 AdminSpecialView。
+     * 同时计算活动当前生效状态（ACTIVE / NOT_STARTED / ENDED / STOPPED）。
+     *
+     * @param special    活动主表
+     * @param rule       活动规则（可能为 null，使用默认值）
+     * @param goodsCount 关联商品数量
+     * @param goodsNos   商品编号列表（仅详情页传入）
+     * @return 活动视图
+     */
     private AdminSpecialView toView(Special special, SpecialRule rule, long goodsCount, List<String> goodsNos) {
         AdminSpecialView view = new AdminSpecialView();
         view.setId(special.getId());
@@ -140,7 +178,13 @@ public class AdminSpecialService {
         return view;
     }
 
-    /** 老活动没有 special_rule 记录时使用默认值，保证升级后仍能展示。 */
+    /**
+     * 当活动没有关联的 special_rule 记录时，使用合理的默认值。
+     * 保证数据库中只有 special 表的老数据升级后仍能正常展示。
+     *
+     * @param view 活动视图（会被直接修改）
+     * @param rule 活动规则（可能为 null）
+     */
     private void applyRuleDefaults(AdminSpecialView view, SpecialRule rule) {
         view.setSpecialSubtitle(rule == null ? "社区精选优惠商品" : rule.getSpecialSubtitle());
         view.setBadgeText(rule == null ? "限时优惠" : rule.getBadgeText());
@@ -152,6 +196,14 @@ public class AdminSpecialService {
         view.setMaxItems(rule == null || rule.getMaxItems() == null ? 4 : rule.getMaxItems());
     }
 
+    /**
+     * 根据活动状态和时间范围计算当前生效状态。
+     *
+     * @param special   活动主表对象
+     * @param startTime 活动开始时间
+     * @param endTime   活动结束时间
+     * @return STOPPED（已停止）/ NOT_STARTED（未开始）/ ENDED（已结束）/ ACTIVE（进行中）
+     */
     private String effectiveStatus(Special special, LocalDateTime startTime, LocalDateTime endTime) {
         if (!Objects.equals(special.getSpecialStatus(), 1)) return "STOPPED";
         LocalDateTime now = LocalDateTime.now();
@@ -160,6 +212,11 @@ public class AdminSpecialService {
         return "ACTIVE";
     }
 
+    /**
+     * 校验促销活动保存请求的必填字段和业务规则。
+     *
+     * @param request 活动保存请求
+     */
     private void validate(SpecialSaveRequest request) {
         if (!StringUtils.hasText(request.getSpecialName())) {
             throw new RuntimeException("请填写促销名称");
@@ -181,6 +238,11 @@ public class AdminSpecialService {
         }
     }
 
+    /**
+     * 校验所选商品编号在数据库中是否存在且未删除。
+     *
+     * @param goodsNos 商品编号集合
+     */
     private void validateGoods(Set<String> goodsNos) {
         if (goodsNos.isEmpty()) return;
         long count = goodsMapper.selectCount(new LambdaQueryWrapper<Goods>()
@@ -190,17 +252,35 @@ public class AdminSpecialService {
         }
     }
 
+    /**
+     * 根据 ID 获取活动，不存在则抛出异常。
+     *
+     * @param id 活动 ID
+     * @return Special 对象
+     */
     private Special requireSpecial(Integer id) {
         Special special = id == null ? null : specialMapper.selectById(id);
         if (special == null) throw new RuntimeException("促销活动不存在");
         return special;
     }
 
+    /**
+     * 根据活动 ID 查询关联的规则。
+     *
+     * @param specialId 活动 ID
+     * @return SpecialRule（可能为 null）
+     */
     private SpecialRule findRule(Integer specialId) {
         return ruleMapper.selectOne(new LambdaQueryWrapper<SpecialRule>()
             .eq(SpecialRule::getSpecialId, specialId).last("LIMIT 1"));
     }
 
+    /**
+     * 标准化促销类型：非 REDUCE（立减）则视为 DISCOUNT（折扣）。
+     *
+     * @param type 原始类型字符串
+     * @return 标准化后的类型
+     */
     private String normalizeType(String type) {
         return REDUCE.equalsIgnoreCase(type) ? REDUCE : DISCOUNT;
     }

@@ -21,9 +21,11 @@ app:
   upload-dir: ${ADMIN_UPLOAD_DIR:uploads}
 
 mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
     db-config:
       id-type: auto
+      logic-delete-field: deleted
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
