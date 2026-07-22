@@ -330,6 +330,12 @@ export const getOrderDetails = (orderNo) => request.get(`/admin/order/${orderNo}
  * @returns {Promise} 返回操作结果
  */
 export const approveOrderRefund = (orderNo) => request.put(`/admin/order/${orderNo}/refund/approve`)
+/**
+ * 拒绝订单退款申请。
+ * @param {string} orderNo - 订单号
+ * @returns {Promise} 返回操作结果
+ */
+export const rejectOrderRefund = (orderNo) => request.put(`/admin/order/${orderNo}/refund/reject`)
 
 // ========== 系统日志与待办 ==========
 

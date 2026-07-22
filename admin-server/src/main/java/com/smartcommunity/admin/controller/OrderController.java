@@ -76,4 +76,16 @@ public class OrderController {
         return Result.ok();
     }
 
+    /**
+     * 拒绝指定订单的退款申请。
+     *
+     * @param orderNo 订单号
+     * @return 操作结果
+     */
+    @PutMapping("/{orderNo}/refund/reject")
+    public Result<Void> rejectRefund(@PathVariable String orderNo) {
+        orderService.rejectRefund(orderNo);
+        return Result.ok();
+    }
+
 }

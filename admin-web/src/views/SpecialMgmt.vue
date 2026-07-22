@@ -4,173 +4,173 @@
   路由路径：/admin/special/index
 -->
 <template>
-  <div class=”page-special”>
+  <div class="page-special">
     <!-- 页面标题与新增按钮 -->
-    <div class=”page-heading”>
+    <div class="page-heading">
       <div>
         <h2>促销管理</h2>
         <p>配置活动时间、优惠规则和参与商品</p>
       </div>
-      <el-button type=”primary” :icon=”Plus” @click=”openEdit()”>新增促销</el-button>
+      <el-button type="primary" :icon="Plus" @click="openEdit()">新增促销</el-button>
     </div>
 
     <!-- 概览统计条 -->
-    <div class=”summary-strip”>
+    <div class="summary-strip">
       <div><span>活动总数</span><strong>{{ list.length }}</strong></div>
       <div><span>进行中</span><strong>{{ activeCount }}</strong></div>
       <div><span>已配置商品</span><strong>{{ goodsTotal }}</strong></div>
     </div>
 
     <!-- 促销活动列表 -->
-    <div class=”table-wrap”>
-      <el-table v-loading=”loading” :data=”list” stripe>
-        <el-table-column label=”促销活动” min-width=”210”>
-          <template #default=”{ row }”>
-            <div class=”cell-main”>{{ row.specialName }}</div>
-            <div class=”cell-sub”>{{ row.specialSubtitle || '暂无活动说明' }}</div>
+    <div class="table-wrap">
+      <el-table v-loading="loading" :data="list" stripe>
+        <el-table-column label="促销活动" min-width="210">
+          <template #default="{ row }">
+            <div class="cell-main">{{ row.specialName }}</div>
+            <div class="cell-sub">{{ row.specialSubtitle || '暂无活动说明' }}</div>
           </template>
         </el-table-column>
-        <el-table-column label=”优惠规则” min-width=”150”>
-          <template #default=”{ row }”>
-            <div class=”rule-line”>
-              <el-tag size=”small” effect=”plain”>{{ row.badgeText || '优惠' }}</el-tag>
+        <el-table-column label="优惠规则" min-width="150">
+          <template #default="{ row }">
+            <div class="rule-line">
+              <el-tag size="small" effect="plain">{{ row.badgeText || '优惠' }}</el-tag>
               <strong>{{ ruleText(row) }}</strong>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label=”活动时间” min-width=”220”>
-          <template #default=”{ row }”>
-            <div class=”cell-main time-text”>{{ formatTime(row.startTime, '开始时间不限') }}</div>
-            <div class=”cell-sub”>至 {{ formatTime(row.endTime, '结束时间不限') }}</div>
+        <el-table-column label="活动时间" min-width="220">
+          <template #default="{ row }">
+            <div class="cell-main time-text">{{ formatTime(row.startTime, '开始时间不限') }}</div>
+            <div class="cell-sub">至 {{ formatTime(row.endTime, '结束时间不限') }}</div>
           </template>
         </el-table-column>
-        <el-table-column label=”活动商品” width=”105” align=”center”>
-          <template #default=”{ row }”><strong>{{ row.goodsCount || 0 }}</strong> 件</template>
+        <el-table-column label="活动商品" width="105" align="center">
+          <template #default="{ row }"><strong>{{ row.goodsCount || 0 }}</strong> 件</template>
         </el-table-column>
-        <el-table-column label=”当前状态” width=”105”>
-          <template #default=”{ row }”>
-            <el-tag :type=”statusMeta(row.effectiveStatus).type” effect=”light”>
+        <el-table-column label="当前状态" width="105">
+          <template #default="{ row }">
+            <el-tag :type="statusMeta(row.effectiveStatus).type" effect="light">
               {{ statusMeta(row.effectiveStatus).text }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label=”首页排序” width=”90” align=”center”>
-          <template #default=”{ row }”>{{ row.sortOrder }}</template>
+        <el-table-column label="首页排序" width="90" align="center">
+          <template #default="{ row }">{{ row.sortOrder }}</template>
         </el-table-column>
-        <el-table-column label=”操作” width=”112” fixed=”right” align=”center”>
-          <template #default=”{ row }”>
-            <el-tooltip content=”编辑促销” placement=”top”>
-              <el-button circle text :icon=”Edit” @click=”openEdit(row)” />
+        <el-table-column label="操作" width="112" fixed="right" align="center">
+          <template #default="{ row }">
+            <el-tooltip content="编辑促销" placement="top">
+              <el-button circle text :icon="Edit" @click="openEdit(row)" />
             </el-tooltip>
-            <el-tooltip content=”删除促销” placement=”top”>
-              <el-button circle text type=”danger” :icon=”Delete” @click=”remove(row)” />
+            <el-tooltip content="删除促销" placement="top">
+              <el-button circle text type="danger" :icon="Delete" @click="remove(row)" />
             </el-tooltip>
           </template>
         </el-table-column>
-        <template #empty><el-empty description=”暂未配置促销活动” /></template>
+        <template #empty><el-empty description="暂未配置促销活动" /></template>
       </el-table>
     </div>
 
     <!-- 新增/编辑促销弹窗 -->
     <el-dialog
-      v-model=”visible”
-      :title=”form.id ? '编辑促销' : '新增促销'”
-      :close-on-click-modal=”false”
-      width=”min(760px, 94vw)”
-      class=”special-dialog”
+      v-model="visible"
+      :title="form.id ? '编辑促销' : '新增促销'"
+      :close-on-click-modal="false"
+      width="min(760px, 94vw)"
+      class="special-dialog"
     >
-      <el-form ref=”formRef” :model=”form” :rules=”rules” label-position=”top”>
+      <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
         <!-- ====== 基础信息 ====== -->
-        <div class=”section-title”>基础信息</div>
-        <div class=”form-grid”>
-          <el-form-item label=”活动名称” prop=”specialName”>
-            <el-input v-model.trim=”form.specialName” maxlength=”50” placeholder=”例如：夏日清凉季” />
+        <div class="section-title">基础信息</div>
+        <div class="form-grid">
+          <el-form-item label="活动名称" prop="specialName">
+            <el-input v-model.trim="form.specialName" maxlength="50" placeholder="例如：夏日清凉季" />
           </el-form-item>
-          <el-form-item label=”活动角标”>
-            <el-input v-model.trim=”form.badgeText” maxlength=”10” placeholder=”例如：限时折扣” />
+          <el-form-item label="活动角标">
+            <el-input v-model.trim="form.badgeText" maxlength="10" placeholder="例如：限时折扣" />
           </el-form-item>
         </div>
-        <el-form-item label=”活动副标题”>
-          <el-input v-model.trim=”form.specialSubtitle” maxlength=”100” show-word-limit placeholder=”用于居民端首页的活动说明” />
+        <el-form-item label="活动副标题">
+          <el-input v-model.trim="form.specialSubtitle" maxlength="100" show-word-limit placeholder="用于居民端首页的活动说明" />
         </el-form-item>
 
         <!-- ====== 优惠规则 ====== -->
-        <div class=”section-title”>优惠规则</div>
-        <div class=”form-grid rule-grid”>
-          <el-form-item label=”优惠方式”>
-            <el-radio-group v-model=”form.promotionType”>
-              <el-radio-button value=”DISCOUNT”>按折扣</el-radio-button>
-              <el-radio-button value=”REDUCE”>按金额直减</el-radio-button>
+        <div class="section-title">优惠规则</div>
+        <div class="form-grid rule-grid">
+          <el-form-item label="优惠方式">
+            <el-radio-group v-model="form.promotionType">
+              <el-radio-button value="DISCOUNT">按折扣</el-radio-button>
+              <el-radio-button value="REDUCE">按金额直减</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item :label=”form.promotionType === 'DISCOUNT' ? '折扣力度' : '每件直减金额'” prop=”discountValue”>
+          <el-form-item :label="form.promotionType === 'DISCOUNT' ? '折扣力度' : '每件直减金额'" prop="discountValue">
             <el-input-number
-              v-model=”form.discountValue”
-              :min=”0.01”
-              :max=”form.promotionType === 'DISCOUNT' ? 9.99 : 99999”
-              :precision=”2”
-              :step=”form.promotionType === 'DISCOUNT' ? 0.1 : 1”
-              controls-position=”right”
+              v-model="form.discountValue"
+              :min="0.01"
+              :max="form.promotionType === 'DISCOUNT' ? 9.99 : 99999"
+              :precision="2"
+              :step="form.promotionType === 'DISCOUNT' ? 0.1 : 1"
+              controls-position="right"
             />
-            <span class=”input-unit”>{{ form.promotionType === 'DISCOUNT' ? '折' : '元' }}</span>
+            <span class="input-unit">{{ form.promotionType === 'DISCOUNT' ? '折' : '元' }}</span>
           </el-form-item>
         </div>
         <!-- 活动有效时间范围 -->
-        <el-form-item label=”活动有效期”>
+        <el-form-item label="活动有效期">
           <el-date-picker
-            v-model=”form.activeTime”
-            type=”datetimerange”
-            start-placeholder=”开始时间（可不填）”
-            end-placeholder=”结束时间（可不填）”
-            range-separator=”至”
-            value-format=”YYYY-MM-DDTHH:mm:ss”
-            format=”YYYY-MM-DD HH:mm”
+            v-model="form.activeTime"
+            type="datetimerange"
+            start-placeholder="开始时间（可不填）"
+            end-placeholder="结束时间（可不填）"
+            range-separator="至"
+            value-format="YYYY-MM-DDTHH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             unlink-panels
           />
         </el-form-item>
 
         <!-- ====== 展示设置 ====== -->
-        <div class=”section-title”>展示设置</div>
-        <div class=”form-grid display-grid”>
-          <el-form-item label=”启用活动”>
-            <div class=”switch-row”>
-              <el-switch v-model=”form.specialStatus” :active-value=”1” :inactive-value=”2” />
+        <div class="section-title">展示设置</div>
+        <div class="form-grid display-grid">
+          <el-form-item label="启用活动">
+            <div class="switch-row">
+              <el-switch v-model="form.specialStatus" :active-value="1" :inactive-value="2" />
               <span>{{ form.specialStatus === 1 ? '已启用' : '已停用' }}</span>
             </div>
           </el-form-item>
-          <el-form-item label=”首页排序”>
-            <el-input-number v-model=”form.sortOrder” :min=”0” :max=”999” controls-position=”right” />
-            <span class=”field-tip”>数值越小越靠前</span>
+          <el-form-item label="首页排序">
+            <el-input-number v-model="form.sortOrder" :min="0" :max="999" controls-position="right" />
+            <span class="field-tip">数值越小越靠前</span>
           </el-form-item>
-          <el-form-item label=”最多展示商品”>
-            <el-input-number v-model=”form.maxItems” :min=”1” :max=”20” controls-position=”right” />
-            <span class=”field-tip”>1 至 20 件</span>
+          <el-form-item label="最多展示商品">
+            <el-input-number v-model="form.maxItems" :min="1" :max="20" controls-position="right" />
+            <span class="field-tip">1 至 20 件</span>
           </el-form-item>
         </div>
 
         <!-- ====== 活动商品选择 ====== -->
-        <div class=”section-title products-title”>
+        <div class="section-title products-title">
           <span>活动商品</span>
           <small>已选择 {{ form.goodsNos.length }} 件</small>
         </div>
-        <el-form-item prop=”goodsNos”>
+        <el-form-item prop="goodsNos">
           <el-select
-            v-model=”form.goodsNos”
+            v-model="form.goodsNos"
             multiple
             filterable
             collapse-tags
             collapse-tags-tooltip
-            :max-collapse-tags=”3”
-            placeholder=”输入商品名称搜索并选择”
-            class=”goods-select”
+            :max-collapse-tags="3"
+            placeholder="输入商品名称搜索并选择"
+            class="goods-select"
           >
             <el-option
-              v-for=”goods in goodsOptions”
-              :key=”goods.goodsNo”
-              :label=”goods.goodsName”
-              :value=”goods.goodsNo”
+              v-for="goods in goodsOptions"
+              :key="goods.goodsNo"
+              :label="goods.goodsName"
+              :value="goods.goodsNo"
             >
-              <div class=”goods-option”>
+              <div class="goods-option">
                 <span>{{ goods.goodsName }}</span>
                 <small>¥{{ formatPrice(goods.goodsMarketPrice) }}</small>
               </div>
@@ -178,26 +178,26 @@
           </el-select>
         </el-form-item>
         <!-- 已选商品列表 -->
-        <div v-if=”selectedGoods.length” class=”selected-goods”>
-          <div v-for=”goods in selectedGoods” :key=”goods.goodsNo” class=”selected-row”>
-            <el-image :src=”goods.goodsPicture” fit=”cover”>
-              <template #error><div class=”image-fallback”><Picture /></div></template>
+        <div v-if="selectedGoods.length" class="selected-goods">
+          <div v-for="goods in selectedGoods" :key="goods.goodsNo" class="selected-row">
+            <el-image :src="goods.goodsPicture" fit="cover">
+              <template #error><div class="image-fallback"><Picture /></div></template>
             </el-image>
             <div>
               <strong>{{ goods.goodsName }}</strong>
-              <span v-if=”goods.goodsMarketPrice != null”>
+              <span v-if="goods.goodsMarketPrice != null">
                 原价 ¥{{ formatPrice(goods.goodsMarketPrice) }} · 促销价约 ¥{{ previewPrice(goods.goodsMarketPrice) }}
               </span>
               <span v-else>商品暂未定价</span>
             </div>
-            <el-button text circle :icon=”Close” aria-label=”移除商品” @click=”removeGoods(goods.goodsNo)” />
+            <el-button text circle :icon="Close" aria-label="移除商品" @click="removeGoods(goods.goodsNo)" />
           </div>
         </div>
       </el-form>
 
       <template #footer>
-        <el-button @click=”visible = false”>取消</el-button>
-        <el-button type=”primary” :loading=”saving” @click=”save”>保存促销</el-button>
+        <el-button @click="visible = false">取消</el-button>
+        <el-button type="primary" :loading="saving" @click="save">保存促销</el-button>
       </template>
     </el-dialog>
   </div>
@@ -342,7 +342,7 @@ async function save() {
  * @param {Object} row - 促销数据
  */
 async function remove(row) {
-  await ElMessageBox.confirm(`删除”${row.specialName}”后，商品关联也会清除。`, '删除促销', {
+  await ElMessageBox.confirm(`删除"${row.specialName}"后，商品关联也会清除。`, '删除促销', {
     type: 'warning',
     confirmButtonText: '删除',
     cancelButtonText: '取消'

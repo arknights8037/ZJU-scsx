@@ -26,6 +26,7 @@
       <el-tab-pane label="退款中" name="5" />
       <el-tab-pane label="已退款" name="6" />
       <el-tab-pane label="已完成" name="9" />
+      <el-tab-pane label="退款被拒" name="-2" />
       <el-tab-pane label="已取消" name="-9" />
     </el-tabs>
 
@@ -356,7 +357,8 @@ function canConfirmReceipt(row) {
  * @returns {boolean}
  */
 function canRefund(row) {
-  return row && [2, 3, 4, 9].includes(row.orderState)
+  // 已付款/配送中/已签收/已完成 可申请；退款被拒后也可重新申请
+  return row && [2, 3, 4, 9, -2].includes(row.orderState)
 }
 
 /**
@@ -463,7 +465,7 @@ async function submitRefund() {
  * @returns {string} 中文描述
  */
 function stateText(state) {
-  const map = { 1: '未付款', 2: '已付款', 3: '配送中', 4: '已签收', 5: '退款中', 6: '已退款', 9: '已完成', '-9': '已取消' }
+  const map = { 1: '未付款', 2: '已付款', 3: '配送中', 4: '已签收', 5: '退款中', 6: '已退款', 9: '已完成', '-2': '退款被拒', '-9': '已取消' }
   return map[state] || '未知'
 }
 
@@ -473,7 +475,7 @@ function stateText(state) {
  * @returns {string} Element Plus Tag 类型
  */
 function stateType(state) {
-  const map = { 1: 'warning', 2: 'primary', 3: 'info', 4: 'success', 5: 'danger', 6: 'info', 9: 'success', '-9': 'info' }
+  const map = { 1: 'warning', 2: 'primary', 3: 'info', 4: 'success', 5: 'danger', 6: 'info', 9: 'success', '-2': 'danger', '-9': 'info' }
   return map[state] || 'info'
 }
 

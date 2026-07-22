@@ -10,6 +10,9 @@ export default defineConfig({
     }
   },
   server: {
+    host: '0.0.0.0',
+    allowedHosts: true,
+    cors: true,
     proxy: {
       // 开发环境把接口和后端静态资源都代理到 Spring Boot，前端代码保持同源访问。
       '/api': {

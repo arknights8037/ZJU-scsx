@@ -31,10 +31,10 @@
         </el-table-column>
         <el-table-column prop="goodsNo" label="商品编号" min-width="120" />
         <el-table-column prop="goodsName" label="商品名称" min-width="160" show-overflow-tooltip />
-        <!-- 商品类别名称 -->
-        <el-table-column prop="categoryName" label="商品类别" min-width="130">
+        <!-- 商品类别名称（联动展示完整路径） -->
+        <el-table-column label="商品类别" min-width="150">
           <template #default="{ row }">
-            <span class="category-name">{{ row.categoryName || '未分类' }}</span>
+            <span class="category-path">{{ row.categoryName || '未分类' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="goodsMarketPrice" label="市场价" min-width="90" />
@@ -45,7 +45,7 @@
           </template>
         </el-table-column>
         <!-- 操作列 -->
-        <el-table-column label="操作" min-width="160">
+        <el-table-column label="操作" min-width="160" fixed="right">
           <template #default="{ row }">
             <el-button size="small" @click="openEdit(row)">编辑</el-button>
             <el-button size="small" type="danger" @click="del(row.id)">删除</el-button>
@@ -70,23 +70,68 @@
     </div>
 
     <!-- 新增/编辑商品弹窗 -->
-    <el-dialog v-model="visible" title="商品" :close-on-click-modal="false" width="620px">
-      <el-form :model="form">
-        <el-form-item label="名称"><el-input v-model="form.goodsName" /></el-form-item>
-        <el-form-item label="编号"><el-input v-model="form.goodsNo" /></el-form-item>
-        <!-- 商品类别下拉选择（带层级显示） -->
-        <el-form-item label="商品类别">
-          <el-select v-model="form.categoryId" filterable placeholder="请选择中文类别" class="category-select">
-            <el-option
-              v-for="category in categories"
-              :key="category.id"
-              :label="categoryLabel(category)"
-              :value="category.id"
-            />
-          </el-select>
+    <el-dialog v-model="visible" :title="form.id ? '编辑商品' : '新增商品'" :close-on-click-modal="false" width="640px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="商品名称" prop="goodsName">
+              <el-input v-model="form.goodsName" maxlength="200" placeholder="请输入商品名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="商品编号" prop="goodsNo">
+              <el-input v-model="form.goodsNo" placeholder="留空自动生成" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 类别联动：先选一级，再选二级 -->
+        <el-form-item label="商品类别" prop="categoryId">
+          <div class="category-cascade">
+            <el-select v-model="parentId" placeholder="一级类别" clearable filterable class="cascade-select" @change="onParentChange">
+              <el-option v-for="item in parentCategories" :key="item.id" :label="item.categoryName" :value="item.id" />
+            </el-select>
+            <span class="cascade-sep">/</span>
+            <el-select
+              v-model="form.categoryId"
+              :disabled="!parentId"
+              placeholder="二级类别（可选）"
+              clearable
+              filterable
+              class="cascade-select"
+            >
+              <template #empty>
+                <span v-if="parentId && !childCategories.length" class="no-child-hint">该类别下暂无子分类</span>
+                <span v-else>无匹配类别</span>
+              </template>
+              <el-option v-for="item in childCategories" :key="item.id" :label="item.categoryName" :value="item.id" />
+            </el-select>
+          </div>
+          <div class="form-help">先选一级类别，再选二级类别；若所选一级无子类则直接使用一级类别</div>
         </el-form-item>
-        <el-form-item label="简介"><el-input v-model="form.goodsIntroduce" type="textarea" rows="2" /></el-form-item>
-        <el-form-item label="市场价"><el-input-number v-model="form.goodsMarketPrice" :precision="2" /></el-form-item>
+
+        <el-form-item label="商品简介" prop="goodsIntroduce">
+          <el-input v-model="form.goodsIntroduce" type="textarea" rows="2" maxlength="500" placeholder="简短介绍商品特点" />
+        </el-form-item>
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="市场价（元）" prop="goodsMarketPrice">
+              <el-input-number v-model="form.goodsMarketPrice" :precision="2" :min="0" :max="999999" style="width:100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="上架状态">
+              <el-switch
+                v-model="form.goodsState"
+                :active-value="1"
+                :inactive-value="0"
+                active-text="上架"
+                inactive-text="下架"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <!-- 商品主图上传 -->
         <el-form-item label="商品主图">
           <div class="goods-upload-row">
@@ -102,21 +147,17 @@
               </div>
             </el-upload>
             <div class="upload-help">
-              <p>支持 JPG、PNG、WebP、GIF，大小不超过 5MB。</p>
+              <p>支持 JPG、PNG、WebP、GIF，大小不超过 5MB</p>
               <el-button v-if="form.goodsPicture" text type="danger" :icon="Delete" @click="form.goodsPicture = ''">
                 移除图片
               </el-button>
             </div>
           </div>
         </el-form-item>
-        <!-- 上架/下架开关 -->
-        <el-form-item label="状态">
-          <el-switch v-model="form.goodsState" :active-value="1" :inactive-value="0" active-text="上架" inactive-text="下架" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="save">确定</el-button>
+        <el-button type="primary" :loading="saving" @click="save">保存商品</el-button>
       </template>
     </el-dialog>
   </div>
@@ -128,24 +169,48 @@
  *
  * 功能：
  * - 商品列表分页展示
- * - 新增/编辑商品（含商品类别选择、图片上传）
- * - 删除商品
+ * - 新增/编辑商品（类别一级/二级联动选择、图片上传）
+ * - 删除商品及表单校验
  */
 
-import { ref, onMounted } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { getCategoryList, getGoodsPage, saveGoods, deleteGoods, uploadGoodsImage } from '@/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete, Plus } from '@element-plus/icons-vue'
 
 const list = ref([])         // 商品列表
-const categories = ref([])   // 商品分类列表
+const categories = ref([])   // 全部分类列表
 const visible = ref(false)   // 编辑弹窗可见性
 const form = ref({})         // 编辑表单数据
 const uploading = ref(false) // 图片上传中
 const loading = ref(false)   // 列表加载中
+const saving = ref(false)    // 保存中
 const page = ref(1)          // 当前页码
 const size = ref(10)         // 每页条数
 const total = ref(0)         // 总记录数
+const formRef = ref()        // el-form 引用
+
+// ---- 类别联动状态 ----
+const parentId = ref(null)   // 选中的一级类别 ID
+
+/** 一级类别列表 */
+const parentCategories = computed(() =>
+  categories.value.filter(c => c.categoryType === 1)
+)
+
+/** 根据选中的一级类别筛选二级类别 */
+const childCategories = computed(() =>
+  categories.value.filter(c => c.categoryType === 2 && c.parentId === parentId.value)
+)
+
+/** 表单校验规则 */
+const rules = {
+  goodsName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+  goodsMarketPrice: [{ required: true, message: '请输入市场价', trigger: 'blur' }],
+}
+
+// 当弹窗关闭时重置联动状态
+watch(visible, val => { if (!val) parentId.value = null })
 
 onMounted(async () => {
   await Promise.all([loadCategories(), loadData()])
@@ -180,17 +245,48 @@ function onSizeChange() {
  * @param {Object} row - 商品数据
  */
 function openEdit(row) {
-  form.value = { ...row }
+  form.value = { goodsState: 1, ...row }
   visible.value = true
+
+  // 根据商品已有 categoryId 反推一级类别
+  if (row.categoryId) {
+    const cat = categories.value.find(c => c.id === row.categoryId)
+    if (cat) {
+      parentId.value = cat.categoryType === 2 ? cat.parentId : cat.id
+    }
+  }
+
+  nextTick(() => formRef.value?.clearValidate())
+}
+
+/** 一级类别切换时，清空已选的二级类别 */
+function onParentChange() {
+  form.value.categoryId = null
+  nextTick(() => formRef.value?.clearValidate('categoryId'))
 }
 
 /** 保存商品 */
 async function save() {
-  await saveGoods(form.value)
-  visible.value = false
-  ElMessage.success('保存成功')
-  page.value = 1
-  loadData()
+  // 若只选了一级未选二级，直接用一级 ID
+  if (parentId.value && !form.value.categoryId) {
+    form.value.categoryId = parentId.value
+  }
+
+  const valid = await formRef.value?.validate().catch(() => false)
+  if (!valid) return
+
+  saving.value = true
+  try {
+    await saveGoods(form.value)
+    visible.value = false
+    ElMessage.success(form.value.id ? '商品信息已更新' : '商品创建成功')
+    page.value = 1
+    await loadData()
+  } catch (e) {
+    // 后端校验错误由 request 拦截器统一提示
+  } finally {
+    saving.value = false
+  }
 }
 
 /**
@@ -231,20 +327,13 @@ function beforeImageUpload(file) {
  * @param {number|string} id - 商品 ID
  */
 async function del(id) {
+  await ElMessageBox.confirm('确定删除该商品吗？', '删除确认', {
+    type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消',
+  })
   await deleteGoods(id)
-  ElMessage.success('已删除')
+  ElMessage.success('商品已删除')
   if (list.value.length === 1 && page.value > 1) page.value--
-  loadData()
-}
-
-/**
- * 生成带父级名称的分类标签
- * @param {Object} category - 分类对象
- * @returns {string} 例如"食品 / 零食"
- */
-function categoryLabel(category) {
-  const parent = categories.value.find(item => item.id === category.parentId)
-  return parent ? `${parent.categoryName} / ${category.categoryName}` : category.categoryName
+  await loadData()
 }
 </script>
 
@@ -261,13 +350,45 @@ function categoryLabel(category) {
   font-size: 12px;
 }
 
-.category-name {
+.category-path {
   color: var(--text-h);
   font-weight: 600;
 }
 
 .category-select {
   width: 100%;
+}
+
+/* ---- 类别联动选择器 ---- */
+.category-cascade {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.cascade-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.cascade-sep {
+  color: var(--text-soft);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.no-child-hint {
+  color: var(--text-soft);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.form-help {
+  margin-top: 4px;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .goods-thumb :deep(.el-image__error) {

@@ -91,6 +91,15 @@
             >
               同意退款
             </el-button>
+            <el-button
+              v-if="row.orderState === 5"
+              link
+              type="danger"
+              class="detail-action"
+              @click="rejectRefund(row)"
+            >
+              拒绝退款
+            </el-button>
           </template>
         </el-table-column>
         <template #empty>
@@ -203,9 +212,9 @@
 
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { CircleCheck, Picture, RefreshLeft, Search, View } from '@element-plus/icons-vue'
+import { CircleCheck, Close, Picture, RefreshLeft, Search, View } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { approveOrderRefund, getOrderDetails, getOrderPage } from '@/api'
+import { approveOrderRefund, getOrderDetails, getOrderPage, rejectOrderRefund } from '@/api'
 
 /** 订单状态选项列表 */
 const stateOptions = [
@@ -216,6 +225,7 @@ const stateOptions = [
   { label: '退款中', value: 5 },
   { label: '已退款', value: 6 },
   { label: '已完成', value: 9 },
+  { label: '退款已拒绝', value: -2 },
   { label: '已关闭', value: -1 },
   { label: '已取消', value: -9 }
 ]
@@ -333,6 +343,36 @@ async function approveRefund(row) {
   }
 }
 
+/**
+ * 拒绝退款审核
+ * @param {Object} row - 退款中的订单行数据
+ */
+async function rejectRefund(row) {
+  try {
+    await ElMessageBox.confirm(
+      `确定拒绝订单 #${shortCode(row.orderNo)} 的退款申请吗？操作后该订单将回到已签收状态。`,
+      '拒绝退款',
+      {
+        confirmButtonText: '拒绝退款',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+    await rejectOrderRefund(row.orderNo)
+    row.orderState = -2
+    row.refundHandledTime = new Date().toISOString()
+    if (selectedOrder.value?.orderNo === row.orderNo) {
+      selectedOrder.value.orderState = -2
+      selectedOrder.value.refundHandledTime = row.refundHandledTime
+    }
+    ElMessage.success('已拒绝退款')
+  } catch (error) {
+    if (error !== 'cancel') {
+      // 请求拦截器会提示业务异常。
+    }
+  }
+}
+
 /** 截取字符串末尾 8 位作为短码显示 */
 function shortCode(value) {
   if (!value) return '--'
@@ -362,13 +402,27 @@ function deliveryText(value) {
 }
 
 /** 订单状态文本映射 */
+const STATE_TEXT_MAP = {
+  1: '待付款', 2: '已付款', 3: '配送中', 4: '已签收',
+  5: '退款中', 6: '已退款', 9: '已完成',
+  '-2': '退款拒绝', '-1': '已关闭', '-9': '已取消'
+}
 function stateText(value) {
-  return ({ 1: '待付款', 2: '已付款', 3: '配送中', 4: '已签收', 5: '退款中', 6: '已退款', 9: '已完成', '-1': '已关闭', '-9': '已取消' })[value] || '未知状态'
+  const text = STATE_TEXT_MAP[value]
+  if (text !== undefined) return text
+  return String(value)
 }
 
 /** 订单状态对应 el-tag 类型 */
+const STATE_TYPE_MAP = {
+  1: 'warning', 2: 'primary', 3: 'warning', 4: 'success',
+  5: 'danger', 6: 'info', 9: 'success',
+  '-2': 'danger', '-1': 'info', '-9': 'danger'
+}
 function stateType(value) {
-  return ({ 1: 'warning', 2: 'primary', 3: 'warning', 4: 'success', 5: 'danger', 6: 'info', 9: 'success', '-1': 'info', '-9': 'danger' })[value] || 'info'
+  const type = STATE_TYPE_MAP[value]
+  if (type !== undefined) return type
+  return 'info'
 }
 </script>
 

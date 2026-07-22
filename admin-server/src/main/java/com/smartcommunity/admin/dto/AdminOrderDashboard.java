@@ -18,6 +18,7 @@ public class AdminOrderDashboard {
     private Long completedCount; // 已完成订单数
     private Long refundingCount; // 退款中订单数
     private Long refundedCount; // 已退款订单数
+    private Long refundRejectedCount; // 退款拒绝订单数
     private Long closedCount; // 已关闭订单数
     private Long canceledCount; // 已取消订单数
 }

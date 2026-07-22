@@ -181,6 +181,28 @@ public class AdminOrderService {
     }
 
     /**
+     * 拒绝退款申请，将订单状态改为退款拒绝（-2）。
+     * 与 approveRefund 互斥，只有退款中（5）的订单可以执行此操作。
+     *
+     * @param orderNo 订单号
+     */
+    @Transactional
+    public void rejectRefund(String orderNo) {
+        Orders order = ordersMapper.selectOne(new LambdaQueryWrapper<Orders>()
+            .eq(Orders::getOrderNo, orderNo)
+            .last("limit 1 for update"));
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (!Integer.valueOf(5).equals(order.getOrderState())) {
+            throw new RuntimeException("只有退款中的订单可以拒绝退款");
+        }
+        order.setOrderState(-2);
+        order.setRefundHandledTime(LocalDateTime.now());
+        ordersMapper.updateById(order);
+    }
+
+    /**
      * 先批量查关联数据，再在内存中组装。新人可以重点对比"循环里查数据库"的 N+1 写法。
      */
     private List<AdminOrderView> fillOrderViews(List<Orders> orders) {

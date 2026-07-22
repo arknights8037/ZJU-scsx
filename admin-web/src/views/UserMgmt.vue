@@ -4,90 +4,90 @@
   路由路径：/admin/auth/user
 -->
 <template>
-  <div class=”page-user”>
+  <div class="page-user">
     <h2>用户管理</h2>
     <!-- 操作工具栏 -->
-    <div class=”page-toolbar”>
-      <el-button type=”primary” @click=”openEdit({})”>新增用户</el-button>
+    <div class="page-toolbar">
+      <el-button type="primary" @click="openEdit({})">新增用户</el-button>
     </div>
     <!-- 用户列表表格 -->
-    <div class=”table-wrap”>
-      <el-table :data=”list” stripe>
-        <el-table-column prop=”phone” label=”手机号” min-width=”130” />
-        <el-table-column prop=”userName” label=”用户名” min-width=”120” />
+    <div class="table-wrap">
+      <el-table :data="list" stripe>
+        <el-table-column prop="phone" label="手机号" min-width="130" />
+        <el-table-column prop="userName" label="用户名" min-width="120" />
         <!-- 业主门牌号：优先展示完整地址，没有则用楼栋/单元/门牌拼接 -->
-        <el-table-column label=”业主门牌” min-width=”190” show-overflow-tooltip>
-          <template #default=”{ row }”>{{ residenceSummary(row) || '未填写' }}</template>
+        <el-table-column label="业主门牌" min-width="190" show-overflow-tooltip>
+          <template #default="{ row }">{{ residenceSummary(row) || '未填写' }}</template>
         </el-table-column>
-        <el-table-column prop=”mail” label=”邮箱” min-width=”160” show-overflow-tooltip />
-        <el-table-column label=”紧急联系” min-width=”150” show-overflow-tooltip>
-          <template #default=”{ row }”>
+        <el-table-column prop="mail" label="邮箱" min-width="160" show-overflow-tooltip />
+        <el-table-column label="紧急联系" min-width="150" show-overflow-tooltip>
+          <template #default="{ row }">
             {{ row.emergencyContact || '未填写' }}
-            <span v-if=”row.emergencyPhone”> / {{ row.emergencyPhone }}</span>
+            <span v-if="row.emergencyPhone"> / {{ row.emergencyPhone }}</span>
           </template>
         </el-table-column>
         <!-- 用户状态开关 -->
-        <el-table-column label=”状态” min-width=”80”>
-          <template #default=”{ row }”>
-            <el-switch :model-value=”row.userStatus === 1” @change=”toggleStatus(row)” />
+        <el-table-column label="状态" min-width="80">
+          <template #default="{ row }">
+            <el-switch :model-value="row.userStatus === 1" @change="toggleStatus(row)" />
           </template>
         </el-table-column>
         <!-- 操作列 -->
-        <el-table-column label=”操作” min-width=”160”>
-          <template #default=”{ row }”>
-            <el-button size=”small” @click=”openRoles(row)”>角色</el-button>
-            <el-button size=”small” @click=”openEdit(row)”>编辑</el-button>
+        <el-table-column label="操作" min-width="160">
+          <template #default="{ row }">
+            <el-button size="small" @click="openRoles(row)">角色</el-button>
+            <el-button size="small" @click="openEdit(row)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
     <!-- 新增/编辑用户弹窗 -->
-    <el-dialog v-model=”editVisible” :title=”editForm.id ? '编辑' : '新增'” :close-on-click-modal=”false”>
-      <el-form :model=”editForm” label-position=”top”>
-        <div class=”form-grid”>
-          <el-form-item label=”手机号”><el-input v-model=”editForm.phone” /></el-form-item>
-          <el-form-item label=”用户名”><el-input v-model=”editForm.userName” /></el-form-item>
+    <el-dialog v-model="editVisible" :title="editForm.id ? '编辑' : '新增'" :close-on-click-modal="false">
+      <el-form :model="editForm" label-position="top">
+        <div class="form-grid">
+          <el-form-item label="手机号"><el-input v-model="editForm.phone" /></el-form-item>
+          <el-form-item label="用户名"><el-input v-model="editForm.userName" /></el-form-item>
         </div>
         <!-- 新增时才显示密码输入 -->
-        <el-form-item v-if=”!editForm.id” label=”密码”>
-          <el-input v-model=”editForm.userPassword” type=”password” />
+        <el-form-item v-if="!editForm.id" label="密码">
+          <el-input v-model="editForm.userPassword" type="password" />
         </el-form-item>
-        <div class=”form-grid”>
-          <el-form-item label=”性别”>
-            <el-select v-model=”editForm.sex” clearable placeholder=”请选择”>
-              <el-option label=”男” value=”男” />
-              <el-option label=”女” value=”女” />
+        <div class="form-grid">
+          <el-form-item label="性别">
+            <el-select v-model="editForm.sex" clearable placeholder="请选择">
+              <el-option label="男" value="男" />
+              <el-option label="女" value="女" />
             </el-select>
           </el-form-item>
-          <el-form-item label=”邮箱”><el-input v-model=”editForm.mail” /></el-form-item>
+          <el-form-item label="邮箱"><el-input v-model="editForm.mail" /></el-form-item>
         </div>
         <!-- 住户信息区域 -->
-        <el-divider content-position=”left”>住户信息</el-divider>
-        <div class=”form-grid”>
-          <el-form-item label=”业主姓名”><el-input v-model=”editForm.ownerName” placeholder=”例如：张三” /></el-form-item>
-          <el-form-item label=”完整住址”><el-input v-model=”editForm.fullAddress” placeholder=”例如：智慧社区 3栋2单元1201” /></el-form-item>
-          <el-form-item label=”楼栋号”><el-input v-model=”editForm.buildingNo” placeholder=”例如：3栋” /></el-form-item>
-          <el-form-item label=”单元号”><el-input v-model=”editForm.unitNo” placeholder=”例如：2单元” /></el-form-item>
-          <el-form-item label=”门牌号”><el-input v-model=”editForm.roomNo” placeholder=”例如：1201” /></el-form-item>
-          <el-form-item label=”紧急联系人”><el-input v-model=”editForm.emergencyContact” /></el-form-item>
-          <el-form-item label=”紧急联系电话”><el-input v-model=”editForm.emergencyPhone” /></el-form-item>
+        <el-divider content-position="left">住户信息</el-divider>
+        <div class="form-grid">
+          <el-form-item label="业主姓名"><el-input v-model="editForm.ownerName" placeholder="例如：张三" /></el-form-item>
+          <el-form-item label="完整住址"><el-input v-model="editForm.fullAddress" placeholder="例如：智慧社区 3栋2单元1201" /></el-form-item>
+          <el-form-item label="楼栋号"><el-input v-model="editForm.buildingNo" placeholder="例如：3栋" /></el-form-item>
+          <el-form-item label="单元号"><el-input v-model="editForm.unitNo" placeholder="例如：2单元" /></el-form-item>
+          <el-form-item label="门牌号"><el-input v-model="editForm.roomNo" placeholder="例如：1201" /></el-form-item>
+          <el-form-item label="紧急联系人"><el-input v-model="editForm.emergencyContact" /></el-form-item>
+          <el-form-item label="紧急联系电话"><el-input v-model="editForm.emergencyPhone" /></el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click=”editVisible = false”>取消</el-button>
-        <el-button type=”primary” @click=”saveEdit”>确定</el-button>
+        <el-button @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveEdit">确定</el-button>
       </template>
     </el-dialog>
 
     <!-- 分配角色弹窗 -->
-    <el-dialog v-model=”roleVisible” title=”分配角色” :close-on-click-modal=”false”>
-      <el-checkbox-group v-model=”selectedRoles”>
-        <el-checkbox v-for=”r in allRoles” :key=”r.id” :value=”r.id” :label=”r.roleName” />
+    <el-dialog v-model="roleVisible" title="分配角色" :close-on-click-modal="false">
+      <el-checkbox-group v-model="selectedRoles">
+        <el-checkbox v-for="r in allRoles" :key="r.id" :value="r.id" :label="r.roleName" />
       </el-checkbox-group>
       <template #footer>
-        <el-button @click=”roleVisible = false”>取消</el-button>
-        <el-button type=”primary” @click=”saveRoles”>保存</el-button>
+        <el-button @click="roleVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveRoles">保存</el-button>
       </template>
     </el-dialog>
   </div>
@@ -165,7 +165,7 @@ async function toggleStatus(row) {
  * @param {Object} row - 用户行数据
  */
 async function openRoles(row) {
-  // 角色弹窗需要同时加载”当前用户已有角色”和”系统全部角色”。
+  // 角色弹窗需要同时加载"当前用户已有角色"和"系统全部角色"。
   currentUser.value = row
   const [ur, ar] = await Promise.all([getUserRoles(row.id), getRoleList()])
   allRoles.value = ar?.data || []
